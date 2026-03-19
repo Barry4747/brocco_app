@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/onboarding/views/hook_screen.dart';
-import '../../features/onboarding/views/preferences_screen.dart';
-
 final goRouterProvider = Provider<GoRouter>((ref) {
   
   // Tu w przyszłości będziemy nasłuchiwać stanu logowania z Supabase
@@ -14,16 +11,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/', 
     
     routes: [
-      GoRoute(
-        path: '/',
-        name: 'onboarding',
-        builder: (context, state) => const HookScreen(),
-      ),
-      GoRoute(
-        path: '/onboarding/preferences',
-        name: 'preferences',
-        builder: (context, state) => const PreferencesScreen(),
-      ),
+     
     ],
 
     redirect: (context, state) {
