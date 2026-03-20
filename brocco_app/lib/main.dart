@@ -20,40 +20,31 @@ void main() async {
   );
 
   final dir = await getApplicationDocumentsDirectory();
-  
-  final isarInstance = await Isar.open(
-    [UserProfileSchema],
-    directory: dir.path,
-  );
-  // Przed samym wydaniem do Google Play / App Store trzeba usunac DevicePreview:
+
+  final isarInstance = await Isar.open([
+    UserProfileSchema,
+  ], directory: dir.path);
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => ProviderScope(
-        overrides: [
-          isarProvider.overrideWithValue(isarInstance),
-        ],
-        child: const BroccoApp(),
-      ),
+    ProviderScope(
+      overrides: [isarProvider.overrideWithValue(isarInstance)],
+      child: const BroccoApp(),
     ),
   );
 }
 
 class BroccoApp extends ConsumerWidget {
   const BroccoApp({super.key});
-  
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
     return MaterialApp.router(
       routerConfig: router,
-      // Przed samym wydaniem do Google Play / App Store usunac te dwie linijki
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
-      // 
       title: 'Brocco',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 0, 0)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 0, 0, 0),
+        ),
         useMaterial3: true,
       ),
     );
