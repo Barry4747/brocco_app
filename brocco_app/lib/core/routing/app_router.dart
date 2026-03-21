@@ -1,6 +1,7 @@
 import 'package:brocco_app/features/auth/views/auth_screen.dart';
 import 'package:brocco_app/features/auth/views/splash_screen.dart';
 import 'package:brocco_app/features/home/views/main_screen.dart';
+import 'package:brocco_app/features/roadmap/views/roadmap_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_biometric_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_goals_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_skill_screen.dart';
@@ -49,6 +50,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/',
         builder: (context, state) => const MainScreen(),
+      ),
+
+      // --- ROADMAP ---
+      GoRoute(
+        path: '/roadmap/:categoryId',
+        builder: (context, state) {
+          final categoryId = state.pathParameters['categoryId']!;
+          return RoadmapScreen(categoryId: categoryId);
+        },
       ),
     ],
 

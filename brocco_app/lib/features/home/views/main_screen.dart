@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/pills/stars_pill.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
@@ -79,7 +80,7 @@ class MainScreen extends ConsumerWidget {
                                   .read(homeViewModelProvider.notifier)
                                   .unlockCategory(cat.id)
                               : () {
-                                  // TODO: navigate to category detail
+                                  context.go('/roadmap/${cat.id}');
                                 },
                         );
                       },

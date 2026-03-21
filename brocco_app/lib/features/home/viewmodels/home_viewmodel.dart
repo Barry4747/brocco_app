@@ -68,10 +68,9 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     final supabase = Supabase.instance.client;
     final response = await supabase.from('categories').select();
 
-    final categories = (response as List)
-        .map((e) => Category.fromJson(e))
-        .toList()
-      ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
+    final categories =
+        (response as List).map((e) => Category.fromJson(e)).toList()
+          ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
 
     // Build mocked progress maps – merge defaults with explicit mocks
     final completed = <String, int>{};
@@ -98,10 +97,7 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     if (current.currentStars < cat.unlockCostStars) return;
 
     state = AsyncValue.data(
-      current.copyWith(
-        currentStars: current.currentStars - cat.unlockCostStars,
-        unlockedIds: {...current.unlockedIds, categoryId},
-      ),
+      current.copyWith(unlockedIds: {...current.unlockedIds, categoryId}),
     );
   }
 }
