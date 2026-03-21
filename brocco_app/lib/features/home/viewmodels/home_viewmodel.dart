@@ -5,7 +5,7 @@ import '../models/category.dart';
 // ──────────────────────────────────────────────
 // MOCK DATA – change these values freely to test
 // ──────────────────────────────────────────────
-const int mockCurrentStars = 19;
+const int mockCurrentStars = 999;
 
 /// categoryId → completedMeals
 const Map<String, int> mockCompletedMeals = {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../models/roadmap_node.dart';
 
@@ -22,7 +23,9 @@ class RoadmapNodeTile extends StatelessWidget {
       onTap: isLocked
           ? null
           : () {
-              // TODO: navigate to recipe detail
+              if (node.recipeId != null) {
+                context.push('/recipe/${node.recipeId}');
+              }
             },
       child: SizedBox(
         width: 120,
