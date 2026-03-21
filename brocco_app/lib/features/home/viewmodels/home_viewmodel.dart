@@ -2,24 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/category.dart';
 
-// ──────────────────────────────────────────────
-// MOCK DATA – change these values freely to test
-// ──────────────────────────────────────────────
-const int mockCurrentStars = 19;
+const int mockCurrentStars = 47;
 
-/// categoryId → completedMeals
-const Map<String, int> mockCompletedMeals = {
-  // Will be matched to the first unlocked category found.
-  // Add more entries keyed by real Supabase category IDs.
-};
+const Map<String, int> mockCompletedMeals = {};
 
-/// categoryId → totalMeals
 const Map<String, int> mockTotalMeals = {};
 
-/// Fallback values when a category is not in the maps above.
 const int mockDefaultCompleted = 3;
 const int mockDefaultTotal = 16;
-// ──────────────────────────────────────────────
 
 class HomeState {
   final List<Category> categories;
@@ -52,7 +42,6 @@ class HomeState {
     );
   }
 
-  /// A category is locked if it has a cost AND hasn't been unlocked yet.
   bool isCategoryLocked(Category cat) =>
       cat.unlockCostStars > 0 && !unlockedIds.contains(cat.id);
 
@@ -72,7 +61,6 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
         (response as List).map((e) => Category.fromJson(e)).toList()
           ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
 
-    // Build mocked progress maps – merge defaults with explicit mocks
     final completed = <String, int>{};
     final totals = <String, int>{};
     for (final cat in categories) {
@@ -88,7 +76,6 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     );
   }
 
-  /// Deducts stars and marks the category as unlocked.
   void unlockCategory(String categoryId) {
     final current = state.valueOrNull;
     if (current == null) return;

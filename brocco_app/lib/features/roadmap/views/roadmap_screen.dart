@@ -14,7 +14,6 @@ class RoadmapScreen extends ConsumerWidget {
 
   const RoadmapScreen({super.key, required this.categoryId});
 
-  // ── Grid layout constants ──
   static const double _nodeWidth = 120;
   static const double _nodeHeight = 140;
   static const double _columnGap = 60;
@@ -88,7 +87,6 @@ class RoadmapScreen extends ConsumerWidget {
   }
 
   Widget _buildContent(BuildContext context, RoadmapState state) {
-    // Determine grid dimensions
     int maxCol = 0;
     int maxRow = 0;
     for (final node in state.nodes) {
@@ -99,13 +97,11 @@ class RoadmapScreen extends ConsumerWidget {
         _padding * 2 + (maxCol + 1) * _nodeWidth + maxCol * _columnGap;
     final canvasHeight = (maxRow + 1) * _nodeHeight + maxRow * _rowGap;
 
-    // Build lookup for connector lines
     final nodeById = {for (final n in state.nodes) n.id: n};
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── Header ──
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
           child: Row(
@@ -128,8 +124,6 @@ class RoadmapScreen extends ConsumerWidget {
             ],
           ),
         ),
-
-        // ── Progress bar ──
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 4),
           child: MainProgressBar(
@@ -144,10 +138,7 @@ class RoadmapScreen extends ConsumerWidget {
             style: TextStyle(color: AppColors.greyText, fontSize: 13),
           ),
         ),
-
         const SizedBox(height: 12),
-
-        // ── Scrollable roadmap canvas ──
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -159,7 +150,6 @@ class RoadmapScreen extends ConsumerWidget {
                 height: canvasHeight + 24,
                 child: Stack(
                   children: [
-                    // Connector lines (behind nodes)
                     ...state.nodes.expand((node) {
                       return node.prerequisiteIds
                           .where((pid) => nodeById.containsKey(pid))
@@ -175,8 +165,6 @@ class RoadmapScreen extends ConsumerWidget {
                         );
                       });
                     }),
-
-                    // Nodes
                     ...state.nodes.map((node) {
                       return Positioned(
                         left: _nodeX(node.mapColumn),

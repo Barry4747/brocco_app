@@ -32,7 +32,6 @@ class CategoryCard extends StatelessWidget {
     return _buildUnlockedCard();
   }
 
-  // ───────────── UNLOCKED ─────────────
   Widget _buildUnlockedCard() {
     return GestureDetector(
       onTap: onTap,
@@ -47,7 +46,6 @@ class CategoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
             SizedBox(
               width: double.infinity,
               height: 160,
@@ -59,8 +57,6 @@ class CategoryCard extends StatelessWidget {
                     )
                   : _imagePlaceholder(),
             ),
-
-            // Title + Progress
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
               child: Column(
@@ -96,7 +92,6 @@ class CategoryCard extends StatelessWidget {
     );
   }
 
-  // ───────────── LOCKED ─────────────
   Widget _buildLockedCard() {
     final overlayOpacity = _canAfford ? 0.45 : 0.7;
 
@@ -110,7 +105,6 @@ class CategoryCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Background image
           ColorFiltered(
             colorFilter: _canAfford
                 ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
@@ -123,22 +117,18 @@ class CategoryCard extends StatelessWidget {
                   )
                 : _imagePlaceholder(),
           ),
-
-          // Dark overlay – heavier when can't afford
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(overlayOpacity * 0.6),
-                  Colors.black.withOpacity(overlayOpacity),
+                  Colors.black.withValues(alpha: overlayOpacity * 0.6),
+                  Colors.black.withValues(alpha: overlayOpacity),
                 ],
               ),
             ),
           ),
-
-          // Lock icon + Title + Unlock button
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -147,7 +137,7 @@ class CategoryCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
+                    color: Colors.white.withValues(alpha: 0.25),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -166,7 +156,6 @@ class CategoryCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Unlock button – uses PrimaryButton, disabled when can't afford
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 48),
                   child: PrimaryButton(
@@ -184,7 +173,7 @@ class CategoryCard extends StatelessWidget {
 
   Widget _imagePlaceholder() {
     return Container(
-      color: AppColors.accentGreen.withOpacity(0.3),
+      color: AppColors.accentGreen.withValues(alpha: 0.3),
       child: const Center(
         child: Text('🍽️', style: TextStyle(fontSize: 48)),
       ),

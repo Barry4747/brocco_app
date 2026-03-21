@@ -24,7 +24,6 @@ class MainScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Header ──
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -49,7 +48,6 @@ class MainScreen extends ConsumerWidget {
 
               const SizedBox(height: 28),
 
-              // ── Category List ──
               Expanded(
                 child: homeAsync.when(
                   data: (state) {

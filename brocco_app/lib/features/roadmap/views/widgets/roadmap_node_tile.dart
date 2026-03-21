@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../models/roadmap_node.dart';
 
@@ -22,14 +23,15 @@ class RoadmapNodeTile extends StatelessWidget {
       onTap: isLocked
           ? null
           : () {
-              // TODO: navigate to recipe detail
+              if (node.recipeId != null) {
+                context.push('/recipe/${node.recipeId}');
+              }
             },
       child: SizedBox(
         width: 120,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Node image container
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -38,12 +40,12 @@ class RoadmapNodeTile extends StatelessWidget {
                   height: 90,
                   decoration: BoxDecoration(
                     color: isLocked
-                        ? Colors.white.withOpacity(0.6)
+                        ? Colors.white.withValues(alpha: 0.6)
                         : Colors.white,
                     border: Border.all(
                       color: isCompleted || isUnlocked
                           ? AppColors.accentGreen
-                          : AppColors.greyText.withOpacity(0.3),
+                          : AppColors.greyText.withValues(alpha: 0.3),
                       width: isCompleted ? 2.5 : 1.5,
                     ),
                     borderRadius: BorderRadius.circular(18),
@@ -67,8 +69,6 @@ class RoadmapNodeTile extends StatelessWidget {
                         : _nodePlaceholder(isLocked),
                   ),
                 ),
-
-                // "gotowe ✓" badge
                 if (isCompleted)
                   Positioned(
                     top: -8,
@@ -99,10 +99,7 @@ class RoadmapNodeTile extends StatelessWidget {
                   ),
               ],
             ),
-
             const SizedBox(height: 6),
-
-            // Title
             Text(
               node.title,
               textAlign: TextAlign.center,
@@ -123,8 +120,8 @@ class RoadmapNodeTile extends StatelessWidget {
   Widget _nodePlaceholder(bool locked) {
     return Container(
       color: locked
-          ? AppColors.greyText.withOpacity(0.1)
-          : AppColors.accentGreen.withOpacity(0.15),
+          ? AppColors.greyText.withValues(alpha: 0.1)
+          : AppColors.accentGreen.withValues(alpha: 0.15),
       child: Center(
         child: Text(
           '🍽️',
