@@ -10,30 +10,23 @@ import 'widgets/ingredients_tab.dart';
 import 'widgets/recipe_tab.dart';
 import 'widgets/info_pills_row.dart';
 
-class RecipeDetailScreen extends ConsumerStatefulWidget {
+final _selectedTabProvider = StateProvider.autoDispose<int>((ref) => 0);
+
+class RecipeDetailScreen extends ConsumerWidget {
   final String recipeId;
 
   const RecipeDetailScreen({super.key, required this.recipeId});
 
-  @override
-  ConsumerState<RecipeDetailScreen> createState() =>
-      _RecipeDetailScreenState();
-}
-
-class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
-  int _selectedTab = 0;
-
   static const _tabLabels = ['Opis', 'Składniki', 'Przepis'];
 
   @override
-  Widget build(BuildContext context) {
-    final detailAsync =
-        ref.watch(recipeDetailViewModelProvider(widget.recipeId));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final detailAsync = ref.watch(recipeDetailViewModelProvider(recipeId));
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: detailAsync.when(
-        data: (state) => _buildContent(context, state),
+        data: (state) => _buildContent(context, ref, state),
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.primaryOrange),
         ),
@@ -45,23 +38,20 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     );
   }
 
-  Widget _buildContent(BuildContext context, RecipeDetailState state) {
+  Widget _buildContent(
+      BuildContext context, WidgetRef ref, RecipeDetailState state) {
     final recipe = state.recipe;
+    final selectedTab = ref.watch(_selectedTabProvider);
 
     return Column(
       children: [
-        // Scrollable content
         Expanded(
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Hero image with back button ──
                 _buildHeroImage(context, recipe.imageUrl),
-
                 const SizedBox(height: 16),
-
-                // ── Title ──
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text(
@@ -75,10 +65,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 14),
-
-                // ── Info pills ──
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: InfoPillsRow(
@@ -87,29 +74,19 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                     tags: recipe.tags,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                // ── Tab bar ──
-                _buildTabBar(),
-
+                _buildTabBar(ref, selectedTab),
                 const SizedBox(height: 4),
-
-                // ── Tab content ──
-                _buildTabContent(state),
+                _buildTabContent(state, selectedTab),
               ],
             ),
           ),
         ),
-
-        // ── Bottom button ──
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           child: PrimaryButton(
             text: 'Gotuj',
-            onPressed: () {
-              // TODO: implement cooking mode
-            },
+            onPressed: () {},
           ),
         ),
       ],
@@ -119,7 +96,6 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
   Widget _buildHeroImage(BuildContext context, String? imageUrl) {
     return Stack(
       children: [
-        // Image
         ClipRRect(
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(24),
@@ -135,8 +111,6 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                 )
               : _imagePlaceholder(),
         ),
-
-        // Back button
         Positioned(
           top: MediaQuery.of(context).padding.top + 8,
           left: 16,
@@ -152,14 +126,14 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     return Container(
       width: double.infinity,
       height: 260,
-      color: AppColors.accentGreen.withOpacity(0.2),
+      color: AppColors.accentGreen.withValues(alpha: 0.2),
       child: const Center(
         child: Text('🍽️', style: TextStyle(fontSize: 64)),
       ),
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(WidgetRef ref, int selectedTab) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
@@ -168,15 +142,16 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: AppColors.accentGreen.withOpacity(0.4),
+            color: AppColors.accentGreen.withValues(alpha: 0.4),
           ),
         ),
         child: Row(
           children: List.generate(_tabLabels.length, (index) {
-            final isSelected = _selectedTab == index;
+            final isSelected = selectedTab == index;
             return Expanded(
               child: GestureDetector(
-                onTap: () => setState(() => _selectedTab = index),
+                onTap: () =>
+                    ref.read(_selectedTabProvider.notifier).state = index,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -207,8 +182,8 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     );
   }
 
-  Widget _buildTabContent(RecipeDetailState state) {
-    switch (_selectedTab) {
+  Widget _buildTabContent(RecipeDetailState state, int selectedTab) {
+    switch (selectedTab) {
       case 0:
         return DescriptionTab(description: state.recipe.description);
       case 1:

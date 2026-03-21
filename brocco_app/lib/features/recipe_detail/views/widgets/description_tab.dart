@@ -29,7 +29,7 @@ class DescriptionTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.accentGreen.withOpacity(0.4)),
+        border: Border.all(color: AppColors.accentGreen.withValues(alpha: 0.4)),
       ),
       child: Text(
         description!,

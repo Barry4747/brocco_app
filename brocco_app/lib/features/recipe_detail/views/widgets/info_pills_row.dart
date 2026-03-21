@@ -36,7 +36,7 @@ class InfoPillsRow extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                const Icon(
                   Icons.access_time_rounded,
                   size: 16,
                   color: AppColors.primaryText,
@@ -77,7 +77,7 @@ class InfoPillsRow extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppColors.primaryText.withOpacity(0.2),
+          color: AppColors.primaryText.withValues(alpha: 0.2),
           width: 1.2,
         ),
       ),

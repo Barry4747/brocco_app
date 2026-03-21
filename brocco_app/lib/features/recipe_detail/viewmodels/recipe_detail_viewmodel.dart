@@ -7,10 +7,7 @@ class RecipeDetailState {
   final Recipe recipe;
   final List<Ingredient> ingredients;
 
-  const RecipeDetailState({
-    required this.recipe,
-    this.ingredients = const [],
-  });
+  const RecipeDetailState({required this.recipe, this.ingredients = const []});
 }
 
 class RecipeDetailViewModel
@@ -19,7 +16,6 @@ class RecipeDetailViewModel
   Future<RecipeDetailState> build(String recipeId) async {
     final supabase = Supabase.instance.client;
 
-    // Fetch recipe
     final recipeResponse = await supabase
         .from('recipes')
         .select()
@@ -27,7 +23,6 @@ class RecipeDetailViewModel
         .single();
     final recipe = Recipe.fromJson(recipeResponse);
 
-    // Fetch ingredients ordered by sort_order
     final ingredientsResponse = await supabase
         .from('ingredients')
         .select()
@@ -37,14 +32,13 @@ class RecipeDetailViewModel
         .map((e) => Ingredient.fromJson(e))
         .toList();
 
-    return RecipeDetailState(
-      recipe: recipe,
-      ingredients: ingredients,
-    );
+    return RecipeDetailState(recipe: recipe, ingredients: ingredients);
   }
 }
 
-final recipeDetailViewModelProvider = AsyncNotifierProvider.family<
-    RecipeDetailViewModel, RecipeDetailState, String>(
-  () => RecipeDetailViewModel(),
-);
+final recipeDetailViewModelProvider =
+    AsyncNotifierProvider.family<
+      RecipeDetailViewModel,
+      RecipeDetailState,
+      String
+    >(() => RecipeDetailViewModel());

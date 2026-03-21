@@ -23,7 +23,7 @@ class ConnectorLine extends StatelessWidget {
         to: Offset(toX, toY),
         color: isCompleted
             ? AppColors.accentGreen
-            : AppColors.accentGreen.withOpacity(0.35),
+            : AppColors.accentGreen.withValues(alpha: 0.35),
         strokeWidth: isCompleted ? 3 : 2,
       ),
     );
