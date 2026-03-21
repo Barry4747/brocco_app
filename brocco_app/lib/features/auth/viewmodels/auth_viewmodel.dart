@@ -30,13 +30,10 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
 
   @override
   Future<AuthState> build() async {
-    // 1. Inicjalizacja nowego API Google Sign In
-    // Wywołujemy to tutaj, aby mieć pewność, że dotenv jest już załadowane
     await GoogleSignIn.instance.initialize(
       serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
     );
 
-    // 2. Sprawdzenie istniejącej sesji w Supabase
     final session = _supabase.auth.currentSession;
     if (session != null) {
       return const AuthState(status: AuthStatus.authenticated);
@@ -47,10 +44,7 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   Future<void> signInWithGoogle() async {
     state = const AsyncValue.loading();
     try {
-      // W nowym API używamy authenticate() zamiast signIn()
       final googleAccount = await GoogleSignIn.instance.authenticate();
-
-      // Pobieramy uwierzytelnienie (idToken)
       final googleAuth = googleAccount.authentication;
       final idToken = googleAuth.idToken;
 
@@ -58,8 +52,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
         throw Exception('Brak tokena ID od Google');
       }
 
-      // Logujemy się do Supabase
-      // W większości przypadków sam idToken wystarczy dla Supabase
       await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
@@ -113,6 +105,9 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   }
 
   String _mapAuthError(Object e) {
+    // --- DODAJEMY TO, ŻEBY ZOBACZYĆ BŁĄD W KONSOLI VS CODE ---
+    print('BŁĄD SUPABASE: $e');
+
     final msg = e.toString().toLowerCase();
     if (msg.contains('invalid login credentials') ||
         msg.contains('invalid_credentials')) {
@@ -125,6 +120,8 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     if (msg.contains('network')) {
       return 'Brak połączenia z internetem.';
     }
-    return 'Coś poszło nie tak. Spróbuj ponownie.';
+
+    // --- ZMIENIAMY DOMYŚLNĄ WIADOMOŚĆ, ŻEBY POKAZAŁA BŁĄD NA EKRANIE TELEFONU ---
+    return 'Błąd: $e';
   }
 }
