@@ -1,10 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/local_db/isar_provider.dart';
+import '../../../core/local_db/roadmap_sync_service.dart';
+import '../../../core/local_db/collections/isar_category.dart';
+import '../../../core/local_db/collections/isar_roadmap_node.dart';
+import '../../../core/local_db/collections/isar_completed_node.dart';
+import '../../../shared/models/user_profile.dart';
 import '../../home/models/category.dart';
 import '../models/roadmap_node.dart';
-
-const int mockRoadmapStars = 47;
-const Set<String> mockCompletedNodeIds = {};
 
 class RoadmapState {
   final Category category;
@@ -36,35 +40,94 @@ class RoadmapState {
 class RoadmapViewModel extends FamilyAsyncNotifier<RoadmapState, String> {
   @override
   Future<RoadmapState> build(String categoryId) async {
-    final supabase = Supabase.instance.client;
+    final isar = ref.read(isarProvider);
+    final userId = Supabase.instance.client.auth.currentUser?.id;
 
-    final catResponse = await supabase
-        .from('categories')
-        .select()
-        .eq('id', categoryId)
-        .single();
-    final category = Category.fromJson(catResponse);
+    final localState = await _readFromIsar(isar, userId, categoryId);
+    state = AsyncValue.data(localState);
 
-    final nodesResponse = await supabase
-        .from('roadmap_nodes')
-        .select()
-        .eq('category_id', categoryId);
-    final nodes = (nodesResponse as List)
-        .map((e) => RoadmapNode.fromJson(e))
+    if (userId != null) {
+      _syncInBackground(isar, userId, categoryId);
+    }
+
+    return localState;
+  }
+
+  Future<RoadmapState> _readFromIsar(
+      Isar isar, String? userId, String categoryId) async {
+    final isarCat = await isar.isarCategorys
+        .where()
+        .supabaseIdEqualTo(categoryId)
+        .findFirst();
+
+    final category = isarCat != null
+        ? Category(
+            id: isarCat.supabaseId!,
+            title: isarCat.title ?? '',
+            imageUrl: isarCat.imageUrl,
+            unlockCostStars: isarCat.unlockCostStars,
+          )
+        : Category(id: categoryId, title: '');
+
+    final isarNodes = await isar.isarRoadmapNodes
+        .where()
+        .categoryIdEqualTo(categoryId)
+        .findAll();
+
+    final nodes = isarNodes
+        .where((n) => n.supabaseId != null)
+        .map((n) => RoadmapNode(
+              id: n.supabaseId!,
+              categoryId: n.categoryId ?? categoryId,
+              recipeId: n.recipeId,
+              title: n.title ?? '',
+              previewImageUrl: n.previewImageUrl,
+              mapColumn: n.mapColumn,
+              mapRow: n.mapRow,
+              prerequisiteIds: n.prerequisiteIds,
+            ))
         .toList();
 
-    final completedCount = nodes
-        .where((n) => mockCompletedNodeIds.contains(n.id))
-        .length;
+    Set<String> completedIds = {};
+    int stars = 0;
+
+    if (userId != null) {
+      final profile = await isar.userProfiles
+          .where()
+          .supabaseUserIdEqualTo(userId)
+          .findFirst();
+      stars = profile?.starsBank ?? 0;
+
+      final nodeIdSet = nodes.map((n) => n.id).toSet();
+      final allCompleted = await isar.isarCompletedNodes
+          .where()
+          .userIdEqualToAnyNodeId(userId)
+          .findAll();
+      completedIds = allCompleted
+          .where((c) => c.nodeId != null && nodeIdSet.contains(c.nodeId))
+          .map((c) => c.nodeId!)
+          .toSet();
+    }
 
     return RoadmapState(
       category: category,
       nodes: nodes,
-      completedNodeIds: mockCompletedNodeIds,
-      currentStars: mockRoadmapStars,
-      completedCount: completedCount,
+      completedNodeIds: completedIds,
+      currentStars: stars,
+      completedCount: completedIds.length,
       totalCount: nodes.length,
     );
+  }
+
+  Future<void> _syncInBackground(
+      Isar isar, String userId, String categoryId) async {
+    try {
+      final syncService = ref.read(roadmapSyncServiceProvider);
+      await syncService.syncRoadmapData(userId, categoryId);
+
+      final updatedState = await _readFromIsar(isar, userId, categoryId);
+      state = AsyncValue.data(updatedState);
+    } catch (_) {}
   }
 }
 

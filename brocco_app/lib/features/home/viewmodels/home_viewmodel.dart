@@ -1,15 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/local_db/isar_provider.dart';
+import '../../../core/local_db/global_sync_service.dart';
+import '../../../core/local_db/collections/isar_category.dart';
+import '../../../core/local_db/collections/isar_unlocked_category.dart';
+import '../../../core/local_db/collections/isar_roadmap_node.dart';
+import '../../../core/local_db/collections/isar_completed_node.dart';
+import '../../../shared/models/user_profile.dart';
 import '../models/category.dart';
-
-const int mockCurrentStars = 47;
-
-const Map<String, int> mockCompletedMeals = {};
-
-const Map<String, int> mockTotalMeals = {};
-
-const int mockDefaultCompleted = 3;
-const int mockDefaultTotal = 16;
 
 class HomeState {
   final List<Category> categories;
@@ -45,47 +44,148 @@ class HomeState {
   bool isCategoryLocked(Category cat) =>
       cat.unlockCostStars > 0 && !unlockedIds.contains(cat.id);
 
-  int completedFor(String categoryId) =>
-      completedMeals[categoryId] ?? mockDefaultCompleted;
+  int completedFor(String categoryId) => completedMeals[categoryId] ?? 0;
 
-  int totalFor(String categoryId) => totalMeals[categoryId] ?? mockDefaultTotal;
+  int totalFor(String categoryId) => totalMeals[categoryId] ?? 0;
 }
 
 class HomeViewModel extends AsyncNotifier<HomeState> {
   @override
   Future<HomeState> build() async {
-    final supabase = Supabase.instance.client;
-    final response = await supabase.from('categories').select();
+    final isar = ref.read(isarProvider);
+    final userId = Supabase.instance.client.auth.currentUser?.id;
 
-    final categories =
-        (response as List).map((e) => Category.fromJson(e)).toList()
-          ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
+    final localState = await _readFromIsar(isar, userId);
+    state = AsyncValue.data(localState);
+
+    if (userId != null) {
+      _syncInBackground(isar, userId);
+    }
+
+    return localState;
+  }
+
+  Future<HomeState> _readFromIsar(Isar isar, String? userId) async {
+    final isarCats = await isar.isarCategorys.where().findAll();
+    final categories = isarCats
+        .where((c) => c.supabaseId != null)
+        .map((c) => Category(
+              id: c.supabaseId!,
+              title: c.title ?? '',
+              imageUrl: c.imageUrl,
+              unlockCostStars: c.unlockCostStars,
+            ))
+        .toList()
+      ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
+
+    int stars = 0;
+    Set<String> unlockedIds = {};
+
+    if (userId != null) {
+      final profile = await isar.userProfiles
+          .where()
+          .supabaseUserIdEqualTo(userId)
+          .findFirst();
+      stars = profile?.starsBank ?? 0;
+
+      final unlocked = await isar.isarUnlockedCategorys
+          .where()
+          .userIdEqualToAnyCategoryId(userId)
+          .findAll();
+      unlockedIds = unlocked
+          .where((u) => u.categoryId != null)
+          .map((u) => u.categoryId!)
+          .toSet();
+    }
 
     final completed = <String, int>{};
     final totals = <String, int>{};
     for (final cat in categories) {
-      completed[cat.id] = mockCompletedMeals[cat.id] ?? mockDefaultCompleted;
-      totals[cat.id] = mockTotalMeals[cat.id] ?? mockDefaultTotal;
+      final nodeCount = await isar.isarRoadmapNodes
+          .where()
+          .categoryIdEqualTo(cat.id)
+          .count();
+      totals[cat.id] = nodeCount;
+
+      if (userId != null && nodeCount > 0) {
+        final nodeIds = await isar.isarRoadmapNodes
+            .where()
+            .categoryIdEqualTo(cat.id)
+            .findAll()
+            .then((nodes) =>
+                nodes.where((n) => n.supabaseId != null).map((n) => n.supabaseId!).toSet());
+
+        final completedCount = await isar.isarCompletedNodes
+            .where()
+            .userIdEqualToAnyNodeId(userId)
+            .findAll()
+            .then((all) => all.where((c) => nodeIds.contains(c.nodeId)).length);
+        completed[cat.id] = completedCount;
+      } else {
+        completed[cat.id] = 0;
+      }
     }
 
     return HomeState(
       categories: categories,
-      currentStars: mockCurrentStars,
+      currentStars: stars,
       completedMeals: completed,
       totalMeals: totals,
+      unlockedIds: unlockedIds,
     );
   }
 
-  void unlockCategory(String categoryId) {
+  Future<void> _syncInBackground(Isar isar, String userId) async {
+    try {
+      final syncService = ref.read(globalSyncServiceProvider);
+      await syncService.syncAll(userId);
+
+      final updatedState = await _readFromIsar(isar, userId);
+      state = AsyncValue.data(updatedState);
+    } catch (_) {}
+  }
+
+  Future<void> unlockCategory(String categoryId) async {
     final current = state.valueOrNull;
     if (current == null) return;
 
     final cat = current.categories.firstWhere((c) => c.id == categoryId);
     if (current.currentStars < cat.unlockCostStars) return;
 
+    final isar = ref.read(isarProvider);
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
     state = AsyncValue.data(
-      current.copyWith(unlockedIds: {...current.unlockedIds, categoryId}),
+      current.copyWith(
+        currentStars: current.currentStars - cat.unlockCostStars,
+        unlockedIds: {...current.unlockedIds, categoryId},
+      ),
     );
+
+    await isar.writeTxn(() async {
+      final profile = await isar.userProfiles
+          .where()
+          .supabaseUserIdEqualTo(userId)
+          .findFirst();
+      if (profile != null) {
+        profile.starsBank -= cat.unlockCostStars;
+        await isar.userProfiles.put(profile);
+      }
+
+      final entry = IsarUnlockedCategory()
+        ..userId = userId
+        ..categoryId = categoryId
+        ..unlockedAt = DateTime.now().toUtc();
+      await isar.isarUnlockedCategorys.put(entry);
+    });
+
+    try {
+      await Supabase.instance.client.rpc(
+        'unlock_category_secure',
+        params: {'target_category_id': categoryId},
+      );
+    } catch (_) {}
   }
 }
 

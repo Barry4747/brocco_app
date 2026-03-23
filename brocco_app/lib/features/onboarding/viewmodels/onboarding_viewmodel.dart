@@ -140,6 +140,18 @@ class OnboardingViewModel extends Notifier<OnboardingData> {
       }
     });
 
+    final freeCategories = await supabase
+        .from('categories')
+        .select('id')
+        .eq('unlock_cost_stars', 0);
+
+    for (final cat in (freeCategories as List)) {
+      await supabase.from('user_unlocked_categories').upsert({
+        'user_id': user.id,
+        'category_id': cat['id'],
+      });
+    }
+
     await ref.read(authViewModelProvider.notifier).refreshProfileState();
   }
 }

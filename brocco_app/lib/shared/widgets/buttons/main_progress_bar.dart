@@ -26,7 +26,9 @@ class MainProgressBar extends StatelessWidget {
                 ),
               ),
               FractionallySizedBox(
-                widthFactor: currentStep / totalSteps,
+                widthFactor: totalSteps > 0
+                    ? (currentStep / totalSteps).clamp(0.0, 1.0)
+                    : 0.0,
                 child: Container(
                   height: 6,
                   decoration: BoxDecoration(
