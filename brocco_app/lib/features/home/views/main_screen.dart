@@ -43,6 +43,14 @@ class MainScreen extends ConsumerWidget {
                     loading: () => const StarsPill(count: 0),
                     error: (_, __) => const StarsPill(count: 0),
                   ),
+                  //tutaj zmiana
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.logout, color: AppColors.greyText),
+                    onPressed: () {
+                      ref.read(authViewModelProvider.notifier).signOut();
+                    },
+                  ),
                 ],
               ),
 
@@ -75,8 +83,8 @@ class MainScreen extends ConsumerWidget {
                           isLocked: locked,
                           onTap: locked
                               ? () => ref
-                                  .read(homeViewModelProvider.notifier)
-                                  .unlockCategory(cat.id)
+                                    .read(homeViewModelProvider.notifier)
+                                    .unlockCategory(cat.id)
                               : () {
                                   context.go('/roadmap/${cat.id}');
                                 },

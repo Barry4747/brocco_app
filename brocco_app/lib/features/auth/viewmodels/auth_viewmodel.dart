@@ -1,6 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart'; // Twój zaktualizowany pakiet
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
@@ -8,21 +8,29 @@ enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
+  final bool? hasProfile;
 
-  const AuthState({this.status = AuthStatus.initial, this.errorMessage});
+  const AuthState({
+    this.status = AuthStatus.initial, 
+    this.errorMessage,
+    this.hasProfile,
+  });
 
-  AuthState copyWith({AuthStatus? status, String? errorMessage}) {
+  AuthState copyWith({
+    AuthStatus? status, 
+    String? errorMessage,
+    bool? hasProfile,
+  }) {
     return AuthState(
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
+      hasProfile: hasProfile ?? this.hasProfile,
     );
   }
 }
 
 final authViewModelProvider = AsyncNotifierProvider<AuthViewModel, AuthState>(
-  () {
-    return AuthViewModel();
-  },
+  () => AuthViewModel(),
 );
 
 class AuthViewModel extends AsyncNotifier<AuthState> {
@@ -34,18 +42,54 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
       serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
     );
 
+    final sub = _supabase.auth.onAuthStateChange.listen((data) async {
+      final session = data.session;
+      if (session != null) {
+        final profileState = await _getProfileState(session.user.id);
+        state = AsyncValue.data(profileState);
+      } else {
+        state = const AsyncValue.data(AuthState(status: AuthStatus.unauthenticated));
+      }
+    });
+
+    ref.onDispose(() {
+      sub.cancel();
+    });
+
     final session = _supabase.auth.currentSession;
     if (session != null) {
-      return const AuthState(status: AuthStatus.authenticated);
+      return await _getProfileState(session.user.id);
     }
     return const AuthState(status: AuthStatus.unauthenticated);
+  }
+
+  Future<AuthState> _getProfileState(String userId) async {
+    try {
+      final res = await _supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
+      final hasProfile = res != null;
+
+      return AuthState(
+        status: AuthStatus.authenticated,
+        hasProfile: hasProfile,
+      );
+    } catch (e) {
+      return const AuthState(status: AuthStatus.authenticated, hasProfile: false);
+    }
+  }
+
+  Future<void> refreshProfileState() async {
+    final session = _supabase.auth.currentSession;
+    if (session != null) {
+      final newState = await _getProfileState(session.user.id);
+      state = AsyncValue.data(newState);
+    }
   }
 
   Future<void> signInWithGoogle() async {
     state = const AsyncValue.loading();
     try {
       final googleAccount = await GoogleSignIn.instance.authenticate();
-      final googleAuth = googleAccount.authentication;
+      final googleAuth = await googleAccount.authentication;
       final idToken = googleAuth.idToken;
 
       if (idToken == null) {
@@ -55,10 +99,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
       await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
-      );
-
-      state = const AsyncValue.data(
-        AuthState(status: AuthStatus.authenticated),
       );
     } catch (e) {
       state = AsyncValue.data(
@@ -71,9 +111,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     state = const AsyncValue.loading();
     try {
       await _supabase.auth.signInWithPassword(email: email, password: password);
-      state = const AsyncValue.data(
-        AuthState(status: AuthStatus.authenticated),
-      );
     } catch (e) {
       state = AsyncValue.data(
         AuthState(status: AuthStatus.error, errorMessage: _mapAuthError(e)),
@@ -84,10 +121,10 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   Future<void> signUpWithEmail(String email, String password) async {
     state = const AsyncValue.loading();
     try {
-      await _supabase.auth.signUp(email: email, password: password);
-      state = const AsyncValue.data(
-        AuthState(status: AuthStatus.authenticated),
-      );
+      final res = await _supabase.auth.signUp(email: email, password: password);
+      if (res.session == null) {
+        await _supabase.auth.signInWithPassword(email: email, password: password);
+      }
     } catch (e) {
       state = AsyncValue.data(
         AuthState(status: AuthStatus.error, errorMessage: _mapAuthError(e)),
@@ -97,7 +134,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
 
   Future<void> signOut() async {
     await _supabase.auth.signOut();
-    // W nowym API odwołujemy się do instancji
     await GoogleSignIn.instance.signOut();
     state = const AsyncValue.data(
       AuthState(status: AuthStatus.unauthenticated),
@@ -105,9 +141,7 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   }
 
   String _mapAuthError(Object e) {
-    // --- DODAJEMY TO, ŻEBY ZOBACZYĆ BŁĄD W KONSOLI VS CODE ---
     print('BŁĄD SUPABASE: $e');
-
     final msg = e.toString().toLowerCase();
     if (msg.contains('invalid login credentials') ||
         msg.contains('invalid_credentials')) {
@@ -120,8 +154,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     if (msg.contains('network')) {
       return 'Brak połączenia z internetem.';
     }
-
-    // --- ZMIENIAMY DOMYŚLNĄ WIADOMOŚĆ, ŻEBY POKAZAŁA BŁĄD NA EKRANIE TELEFONU ---
     return 'Błąd: $e';
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:brocco_app/features/auth/views/auth_screen.dart';
 import 'package:brocco_app/features/auth/views/splash_screen.dart';
 import 'package:brocco_app/features/home/views/main_screen.dart';
@@ -8,28 +9,32 @@ import 'package:brocco_app/features/onboarding/views/onboarding_goals_screen.dar
 import 'package:brocco_app/features/onboarding/views/onboarding_skill_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'package:brocco_app/features/onboarding/views/onboarding_tastes_screen.dart';
+import 'package:brocco_app/features/auth/viewmodels/auth_viewmodel.dart';
+
+class RouterNotifier extends ChangeNotifier {
+  final Ref ref;
+  RouterNotifier(this.ref) {
+    ref.listen(authViewModelProvider, (_, __) => notifyListeners());
+  }
+}
 
 final goRouterProvider = Provider<GoRouter>((ref) {
+  final notifier = RouterNotifier(ref);
+
   return GoRouter(
     initialLocation: '/splash',
+    refreshListenable: notifier,
 
     routes: [
-      // --- SPLASH ---
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
       ),
-
-      // --- AUTH ---
       GoRoute(
         path: '/auth',
         builder: (context, state) => const AuthScreen(),
       ),
-
-      // --- ONBOARDING ---
       GoRoute(
         path: '/onboarding/step_1',
         builder: (context, state) => const OnboardingSkillScreen(),
@@ -46,14 +51,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/onboarding/step_4',
         builder: (context, state) => const OnboardingBiometricsScreen(),
       ),
-
-      // --- MAIN APP ---
       GoRoute(
         path: '/',
         builder: (context, state) => const MainScreen(),
       ),
-
-      // --- ROADMAP ---
       GoRoute(
         path: '/roadmap/:categoryId',
         builder: (context, state) {
@@ -61,8 +62,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return RoadmapScreen(categoryId: categoryId);
         },
       ),
-
-      // --- RECIPE DETAIL ---
       GoRoute(
         path: '/recipe/:recipeId',
         builder: (context, state) {
@@ -73,21 +72,45 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     ],
 
     redirect: (context, state) {
-      final session = Supabase.instance.client.auth.currentSession;
-      final isLoggedIn = session != null;
+      final authAsync = ref.read(authViewModelProvider);
       final location = state.uri.path;
 
       final isOnSplash = location == '/splash';
       final isOnAuth = location == '/auth';
+      final isOnOnboarding = location.startsWith('/onboarding');
 
-      // Splash sam zajmuje się przekierowaniem – nie ingerujemy
-      if (isOnSplash) return null;
+      if (authAsync.isLoading || !authAsync.hasValue) {
+         if (isOnSplash) return null;
+         return '/splash';
+      }
 
-      // Niezalogowany użytkownik trafia na /auth
-      if (!isLoggedIn && !isOnAuth) return '/auth';
+      final authValue = authAsync.value!;
 
-      // Zalogowany użytkownik nie wchodzi na /auth
-      if (isLoggedIn && isOnAuth) return '/';
+      // Niezalogowany
+      if (authValue.status != AuthStatus.authenticated) {
+        if (!isOnAuth) return '/auth';
+        return null; // Zostaje w auth
+      }
+
+      // Zalogowany, ale dopiero odpytujemy bazę o profil - zostaje na splash (albo redirect na splash)
+      if (authValue.hasProfile == null) {
+        if (!isOnSplash) return '/splash';
+        return null;
+      }
+
+      // Zalogowany BEZ profilu (Onboarding w toku)
+      if (authValue.hasProfile == false) {
+        if (!isOnOnboarding) {
+          return '/onboarding/step_1';
+        }
+        return null; // Zostaje na ekranie onboardingu w wybranym kroku
+      }
+
+      // Zalogowany Z PROFILEM (Onboarding skończony)
+      if (authValue.hasProfile == true) {
+        if (isOnSplash || isOnAuth || isOnOnboarding) return '/';
+        return null; // Wolnoć Tomku w swoim domku
+      }
 
       return null;
     },

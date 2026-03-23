@@ -4,14 +4,14 @@ part 'user_profile.g.dart';
 
 @collection
 class UserProfile {
-  Id id = Isar.autoIncrement; // Wymóg Isara
+  Id id = Isar.autoIncrement;
 
   @Index(unique: true)
-  String? supabaseUserId; 
+  String? supabaseUserId;
 
   String? username;
   String? avatarUrl;
-  
+
   String? cookingLevel;
   List<String>? dietaryPreferences;
   List<String>? allergies;

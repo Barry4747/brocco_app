@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../viewmodels/auth_viewmodel.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -34,22 +32,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ),
     );
     _animCtrl.forward();
-    _checkSession();
-  }
-
-  Future<void> _checkSession() async {
-    // Minimalny czas wyświetlenia splash screena
-    await Future.delayed(const Duration(milliseconds: 1500));
-    if (!mounted) return;
-
-    final authState = await ref.read(authViewModelProvider.future);
-    if (!mounted) return;
-
-    if (authState.status == AuthStatus.authenticated) {
-      context.go('/');
-    } else {
-      context.go('/auth');
-    }
   }
 
   @override
