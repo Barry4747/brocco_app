@@ -11,4 +11,5 @@ class IsarUnlockedCategory {
 
   String? categoryId;
   DateTime? unlockedAt;
+  int completedNodesCount = 0;
 }

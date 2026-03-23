@@ -31,7 +31,8 @@ class GlobalSyncService {
           ..supabaseId = row['id'] as String
           ..title = row['title'] as String?
           ..imageUrl = row['image_url'] as String?
-          ..unlockCostStars = (row['unlock_cost_stars'] as int?) ?? 0;
+          ..unlockCostStars = (row['unlock_cost_stars'] as int?) ?? 0
+          ..totalNodes = (row['total_nodes'] as int?) ?? 0;
         await _isar.isarCategorys.put(cat);
       }
     });
@@ -88,7 +89,8 @@ class GlobalSyncService {
           ..categoryId = row['category_id'] as String
           ..unlockedAt = row['unlocked_at'] != null
               ? DateTime.parse(row['unlocked_at'] as String)
-              : null;
+              : null
+          ..completedNodesCount = (row['completed_nodes_count'] as int?) ?? 0;
         await _isar.isarUnlockedCategorys.put(entry);
       }
     });

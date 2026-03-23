@@ -140,10 +140,11 @@ class OnboardingViewModel extends Notifier<OnboardingData> {
       }
     });
 
-    final freeCategories = await supabase
-        .from('categories')
-        .select('id')
-        .eq('unlock_cost_stars', 0);
+    final freeCategories =
+        await supabase // TODO: maybe later change to more efficient logic
+            .from('categories')
+            .select('id')
+            .eq('unlock_cost_stars', 0);
 
     for (final cat in (freeCategories as List)) {
       await supabase.from('user_unlocked_categories').upsert({
@@ -164,8 +165,8 @@ final onboardingViewModelProvider =
 extension UserProfileMapper on UserProfile {
   OnboardingData toOnboardingData() {
     return OnboardingData(
-      cookingSkill: cookingLevel != null 
-          ? CookingSkill.values.asNameMap()[cookingLevel!] 
+      cookingSkill: cookingLevel != null
+          ? CookingSkill.values.asNameMap()[cookingLevel!]
           : null,
       allergies: allergies ?? const [],
       eatingStyle: dietaryPreferences?.isNotEmpty == true

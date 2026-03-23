@@ -12,4 +12,5 @@ class IsarCategory {
   String? title;
   String? imageUrl;
   int unlockCostStars = 0;
+  int totalNodes = 0;
 }

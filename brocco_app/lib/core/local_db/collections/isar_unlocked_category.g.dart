@@ -23,13 +23,18 @@ const IsarUnlockedCategorySchema = CollectionSchema(
       name: r'categoryId',
       type: IsarType.string,
     ),
-    r'unlockedAt': PropertySchema(
+    r'completedNodesCount': PropertySchema(
       id: 1,
+      name: r'completedNodesCount',
+      type: IsarType.long,
+    ),
+    r'unlockedAt': PropertySchema(
+      id: 2,
       name: r'unlockedAt',
       type: IsarType.dateTime,
     ),
     r'userId': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'userId',
       type: IsarType.string,
     )
@@ -95,8 +100,9 @@ void _isarUnlockedCategorySerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.categoryId);
-  writer.writeDateTime(offsets[1], object.unlockedAt);
-  writer.writeString(offsets[2], object.userId);
+  writer.writeLong(offsets[1], object.completedNodesCount);
+  writer.writeDateTime(offsets[2], object.unlockedAt);
+  writer.writeString(offsets[3], object.userId);
 }
 
 IsarUnlockedCategory _isarUnlockedCategoryDeserialize(
@@ -107,9 +113,10 @@ IsarUnlockedCategory _isarUnlockedCategoryDeserialize(
 ) {
   final object = IsarUnlockedCategory();
   object.categoryId = reader.readStringOrNull(offsets[0]);
+  object.completedNodesCount = reader.readLong(offsets[1]);
   object.id = id;
-  object.unlockedAt = reader.readDateTimeOrNull(offsets[1]);
-  object.userId = reader.readStringOrNull(offsets[2]);
+  object.unlockedAt = reader.readDateTimeOrNull(offsets[2]);
+  object.userId = reader.readStringOrNull(offsets[3]);
   return object;
 }
 
@@ -123,8 +130,10 @@ P _isarUnlockedCategoryDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 2:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 3:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -613,6 +622,62 @@ extension IsarUnlockedCategoryQueryFilter on QueryBuilder<IsarUnlockedCategory,
   }
 
   QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory,
+      QAfterFilterCondition> completedNodesCountEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'completedNodesCount',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory,
+      QAfterFilterCondition> completedNodesCountGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'completedNodesCount',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory,
+      QAfterFilterCondition> completedNodesCountLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'completedNodesCount',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory,
+      QAfterFilterCondition> completedNodesCountBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'completedNodesCount',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory,
       QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -922,6 +987,20 @@ extension IsarUnlockedCategoryQuerySortBy
   }
 
   QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory, QAfterSortBy>
+      sortByCompletedNodesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'completedNodesCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory, QAfterSortBy>
+      sortByCompletedNodesCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'completedNodesCount', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory, QAfterSortBy>
       sortByUnlockedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'unlockedAt', Sort.asc);
@@ -963,6 +1042,20 @@ extension IsarUnlockedCategoryQuerySortThenBy
       thenByCategoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'categoryId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory, QAfterSortBy>
+      thenByCompletedNodesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'completedNodesCount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory, QAfterSortBy>
+      thenByCompletedNodesCountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'completedNodesCount', Sort.desc);
     });
   }
 
@@ -1019,6 +1112,13 @@ extension IsarUnlockedCategoryQueryWhereDistinct
   }
 
   QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory, QDistinct>
+      distinctByCompletedNodesCount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'completedNodesCount');
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, IsarUnlockedCategory, QDistinct>
       distinctByUnlockedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unlockedAt');
@@ -1045,6 +1145,13 @@ extension IsarUnlockedCategoryQueryProperty on QueryBuilder<
       categoryIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'categoryId');
+    });
+  }
+
+  QueryBuilder<IsarUnlockedCategory, int, QQueryOperations>
+      completedNodesCountProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'completedNodesCount');
     });
   }
 

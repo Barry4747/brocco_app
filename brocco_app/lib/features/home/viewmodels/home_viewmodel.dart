@@ -5,8 +5,6 @@ import '../../../core/local_db/isar_provider.dart';
 import '../../../core/local_db/global_sync_service.dart';
 import '../../../core/local_db/collections/isar_category.dart';
 import '../../../core/local_db/collections/isar_unlocked_category.dart';
-import '../../../core/local_db/collections/isar_roadmap_node.dart';
-import '../../../core/local_db/collections/isar_completed_node.dart';
 import '../../../shared/models/user_profile.dart';
 import '../models/category.dart';
 
@@ -74,12 +72,14 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
               title: c.title ?? '',
               imageUrl: c.imageUrl,
               unlockCostStars: c.unlockCostStars,
+              totalNodes: c.totalNodes,
             ))
         .toList()
       ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
 
     int stars = 0;
     Set<String> unlockedIds = {};
+    List<IsarUnlockedCategory> unlockedList = [];
 
     if (userId != null) {
       final profile = await isar.userProfiles
@@ -88,11 +88,11 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
           .findFirst();
       stars = profile?.starsBank ?? 0;
 
-      final unlocked = await isar.isarUnlockedCategorys
+      unlockedList = await isar.isarUnlockedCategorys
           .where()
           .userIdEqualToAnyCategoryId(userId)
           .findAll();
-      unlockedIds = unlocked
+      unlockedIds = unlockedList
           .where((u) => u.categoryId != null)
           .map((u) => u.categoryId!)
           .toSet();
@@ -101,29 +101,12 @@ class HomeViewModel extends AsyncNotifier<HomeState> {
     final completed = <String, int>{};
     final totals = <String, int>{};
     for (final cat in categories) {
-      final nodeCount = await isar.isarRoadmapNodes
-          .where()
-          .categoryIdEqualTo(cat.id)
-          .count();
-      totals[cat.id] = nodeCount;
+      totals[cat.id] = cat.totalNodes;
 
-      if (userId != null && nodeCount > 0) {
-        final nodeIds = await isar.isarRoadmapNodes
-            .where()
-            .categoryIdEqualTo(cat.id)
-            .findAll()
-            .then((nodes) =>
-                nodes.where((n) => n.supabaseId != null).map((n) => n.supabaseId!).toSet());
-
-        final completedCount = await isar.isarCompletedNodes
-            .where()
-            .userIdEqualToAnyNodeId(userId)
-            .findAll()
-            .then((all) => all.where((c) => nodeIds.contains(c.nodeId)).length);
-        completed[cat.id] = completedCount;
-      } else {
-        completed[cat.id] = 0;
-      }
+      final unlockedCat = unlockedList
+          .where((u) => u.categoryId == cat.id)
+          .firstOrNull;
+      completed[cat.id] = unlockedCat?.completedNodesCount ?? 0;
     }
 
     return HomeState(
