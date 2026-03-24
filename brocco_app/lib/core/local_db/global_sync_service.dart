@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'isar_provider.dart';
 import 'collections/isar_category.dart';
 import 'collections/isar_unlocked_category.dart';
+import 'dart:math' as math;
 import '../../shared/models/user_profile.dart';
 
 class GlobalSyncService {
@@ -84,13 +85,20 @@ class GlobalSyncService {
           .deleteAll(existing.map((e) => e.id).toList());
 
       for (final row in rows) {
+        final categoryId = row['category_id'] as String;
+        final existingCat = existing.where((e) => e.categoryId == categoryId).firstOrNull;
+        final incomingCount = (row['completed_nodes_count'] as int?) ?? 0;
+        final resolvedCount = existingCat != null 
+            ? math.max(existingCat.completedNodesCount, incomingCount) 
+            : incomingCount;
+
         final entry = IsarUnlockedCategory()
           ..userId = userId
-          ..categoryId = row['category_id'] as String
+          ..categoryId = categoryId
           ..unlockedAt = row['unlocked_at'] != null
               ? DateTime.parse(row['unlocked_at'] as String)
               : null
-          ..completedNodesCount = (row['completed_nodes_count'] as int?) ?? 0;
+          ..completedNodesCount = resolvedCount;
         await _isar.isarUnlockedCategorys.put(entry);
       }
     });

@@ -120,7 +120,7 @@ class RoadmapScreen extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              StarsPill(count: state.currentStars),
+              StarsPill(initialCount: state.currentStars),
             ],
           ),
         ),

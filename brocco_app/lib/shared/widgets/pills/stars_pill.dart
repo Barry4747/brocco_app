@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../models/user_profile.dart';
 
-class StarsPill extends StatelessWidget {
-  final int count;
+class StarsPill extends ConsumerWidget {
+  final int? initialCount;
 
-  const StarsPill({super.key, required this.count});
+  const StarsPill({super.key, this.initialCount});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(userProfileStreamProvider);
+    final count = profileAsync.valueOrNull?.starsBank ?? initialCount ?? 0;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(

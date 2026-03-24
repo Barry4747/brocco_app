@@ -24,7 +24,8 @@ class RoadmapNodeTile extends StatelessWidget {
           ? null
           : () {
               if (node.recipeId != null) {
-                context.push('/recipe/${node.recipeId}');
+                final encodedTitle = Uri.encodeComponent(node.title);
+                context.push('/recipe/${node.recipeId}?nodeId=${node.id}&categoryId=${node.categoryId}&recipeTitle=$encodedTitle');
               }
             },
       child: SizedBox(

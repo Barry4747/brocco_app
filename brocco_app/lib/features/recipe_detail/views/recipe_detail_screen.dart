@@ -14,8 +14,17 @@ final _selectedTabProvider = StateProvider.autoDispose<int>((ref) => 0);
 
 class RecipeDetailScreen extends ConsumerWidget {
   final String recipeId;
+  final String? nodeId;
+  final String? categoryId;
+  final String? recipeTitle;
 
-  const RecipeDetailScreen({super.key, required this.recipeId});
+  const RecipeDetailScreen({
+    super.key,
+    required this.recipeId,
+    this.nodeId,
+    this.categoryId,
+    this.recipeTitle,
+  });
 
   static const _tabLabels = ['Opis', 'Składniki', 'Przepis'];
 
@@ -85,8 +94,13 @@ class RecipeDetailScreen extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           child: PrimaryButton(
-            text: 'Gotuj',
-            onPressed: () {},
+            text: 'Rozpocznij gotowanie',
+            onPressed: () {
+              if (nodeId != null && categoryId != null) {
+                final encodedTitle = Uri.encodeComponent(recipeTitle ?? '');
+                context.replace('/game/completed?nodeId=$nodeId&categoryId=$categoryId&recipeTitle=$encodedTitle');
+              }
+            },
           ),
         ),
       ],

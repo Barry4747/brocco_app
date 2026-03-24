@@ -38,11 +38,7 @@ class MainScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  homeAsync.when(
-                    data: (state) => StarsPill(count: state.currentStars),
-                    loading: () => const StarsPill(count: 0),
-                    error: (_, __) => const StarsPill(count: 0),
-                  ),
+                  const StarsPill(),
                   //tutaj zmiana
                   const SizedBox(width: 8),
                   IconButton(

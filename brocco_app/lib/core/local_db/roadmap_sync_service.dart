@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'isar_provider.dart';
 import 'collections/isar_roadmap_node.dart';
 import 'collections/isar_completed_node.dart';
+import 'collections/isar_unlocked_category.dart';
 
 class RoadmapSyncService {
   final Isar _isar;
@@ -58,6 +59,8 @@ class RoadmapSyncService {
         .then((nodes) => nodes.map((n) => n.supabaseId!).toList());
 
     if (nodeIds.isEmpty) return;
+    
+    bool needsSupabaseRepair = false;
 
     final response = await _supabase
         .from('user_completed_nodes')
@@ -85,7 +88,42 @@ class RoadmapSyncService {
           ..starsEarned = (row['stars_earned'] as int?) ?? 1;
         await _isar.isarCompletedNodes.put(entry);
       }
+
+      // Heal completed_nodes_count in unlocked category
+      final unlockedCats = await _isar.isarUnlockedCategorys
+          .where()
+          .userIdEqualToAnyCategoryId(userId)
+           .findAll();
+      var unlockedCat = unlockedCats
+          .where((c) => c.categoryId == categoryId)
+          .firstOrNull;
+
+      if (unlockedCat == null) {
+        final newCat = IsarUnlockedCategory()
+          ..userId = userId
+          ..categoryId = categoryId
+          ..unlockedAt = DateTime.now().toUtc()
+          ..completedNodesCount = rows.length;
+        await _isar.isarUnlockedCategorys.put(newCat);
+        needsSupabaseRepair = true;
+      } else if (unlockedCat.completedNodesCount != rows.length) {
+        unlockedCat.completedNodesCount = rows.length;
+        await _isar.isarUnlockedCategorys.put(unlockedCat);
+        needsSupabaseRepair = true;
+      }
     });
+
+    if (needsSupabaseRepair) {
+      try {
+        await _supabase.from('user_unlocked_categories').upsert({
+          'user_id': userId,
+          'category_id': categoryId,
+          'completed_nodes_count': rows.length,
+          'unlocked_at': DateTime.now().toIso8601String(),
+        // ignoring constraints explicitly if needed, but upsert should work if PK is user_id + category_id
+        });
+      } catch (_) {}
+    }
   }
 }
 
