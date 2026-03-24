@@ -9,10 +9,10 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'core/local_db/isar_provider.dart';
-import 'core/local_db/collections/isar_category.dart';
-import 'core/local_db/collections/isar_unlocked_category.dart';
-import 'core/local_db/collections/isar_roadmap_node.dart';
-import 'core/local_db/collections/isar_completed_node.dart';
+import 'features/home/models/local/isar_category.dart';
+import 'features/home/models/local/isar_unlocked_category.dart';
+import 'features/roadmap/models/local/isar_roadmap_node.dart';
+import 'features/roadmap/models/local/isar_completed_node.dart';
 import 'shared/models/user_profile.dart';
 
 void main() async {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/buttons/main_progress_bar.dart';
 import '../../../../shared/widgets/buttons/primary_button.dart';
-import '../../models/category.dart';
+import '../../models/remote/category.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;

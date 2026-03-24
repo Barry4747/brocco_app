@@ -3,10 +3,10 @@ import 'package:isar/isar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/local_db/isar_provider.dart';
 import '../../../core/local_db/global_sync_service.dart';
-import '../../../core/local_db/collections/isar_category.dart';
-import '../../../core/local_db/collections/isar_unlocked_category.dart';
+import '../models/local/isar_category.dart';
+import '../models/local/isar_unlocked_category.dart';
 import '../../../shared/models/user_profile.dart';
-import '../models/category.dart';
+import '../models/remote/category.dart';
 
 class HomeState {
   final List<Category> categories;

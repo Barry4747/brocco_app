@@ -3,12 +3,12 @@ import 'package:isar/isar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/local_db/isar_provider.dart';
 import '../../../core/local_db/roadmap_sync_service.dart';
-import '../../../core/local_db/collections/isar_category.dart';
-import '../../../core/local_db/collections/isar_roadmap_node.dart';
-import '../../../core/local_db/collections/isar_completed_node.dart';
+import '../../home/models/local/isar_category.dart';
+import '../models/local/isar_roadmap_node.dart';
+import '../models/local/isar_completed_node.dart';
 import '../../../shared/models/user_profile.dart';
-import '../../home/models/category.dart';
-import '../models/roadmap_node.dart';
+import '../../home/models/remote/category.dart';
+import '../models/remote/roadmap_node.dart';
 
 class RoadmapState {
   final Category category;

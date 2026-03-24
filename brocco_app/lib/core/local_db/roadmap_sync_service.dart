@@ -2,9 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'isar_provider.dart';
-import 'collections/isar_roadmap_node.dart';
-import 'collections/isar_completed_node.dart';
-import 'collections/isar_unlocked_category.dart';
+import '../../features/roadmap/models/local/isar_roadmap_node.dart';
+import '../../features/roadmap/models/local/isar_completed_node.dart';
+import '../../features/home/models/local/isar_unlocked_category.dart';
 
 class RoadmapSyncService {
   final Isar _isar;
@@ -85,7 +85,8 @@ class RoadmapSyncService {
         final entry = IsarCompletedNode()
           ..userId = userId
           ..nodeId = row['node_id'] as String
-          ..starsEarned = (row['stars_earned'] as int?) ?? 1;
+          ..starsEarned = (row['stars_earned'] as int?) ?? 1
+          ..imageUrl = row['image_url'] as String?;
         await _isar.isarCompletedNodes.put(entry);
       }
 

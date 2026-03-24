@@ -17,18 +17,23 @@ const IsarCompletedNodeSchema = CollectionSchema(
   name: r'IsarCompletedNode',
   id: 3021209247914724669,
   properties: {
-    r'nodeId': PropertySchema(
+    r'imageUrl': PropertySchema(
       id: 0,
+      name: r'imageUrl',
+      type: IsarType.string,
+    ),
+    r'nodeId': PropertySchema(
+      id: 1,
       name: r'nodeId',
       type: IsarType.string,
     ),
     r'starsEarned': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'starsEarned',
       type: IsarType.long,
     ),
     r'userId': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'userId',
       type: IsarType.string,
     )
@@ -73,6 +78,12 @@ int _isarCompletedNodeEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
+    final value = object.imageUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.nodeId;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -93,9 +104,10 @@ void _isarCompletedNodeSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.nodeId);
-  writer.writeLong(offsets[1], object.starsEarned);
-  writer.writeString(offsets[2], object.userId);
+  writer.writeString(offsets[0], object.imageUrl);
+  writer.writeString(offsets[1], object.nodeId);
+  writer.writeLong(offsets[2], object.starsEarned);
+  writer.writeString(offsets[3], object.userId);
 }
 
 IsarCompletedNode _isarCompletedNodeDeserialize(
@@ -106,9 +118,10 @@ IsarCompletedNode _isarCompletedNodeDeserialize(
 ) {
   final object = IsarCompletedNode();
   object.id = id;
-  object.nodeId = reader.readStringOrNull(offsets[0]);
-  object.starsEarned = reader.readLong(offsets[1]);
-  object.userId = reader.readStringOrNull(offsets[2]);
+  object.imageUrl = reader.readStringOrNull(offsets[0]);
+  object.nodeId = reader.readStringOrNull(offsets[1]);
+  object.starsEarned = reader.readLong(offsets[2]);
+  object.userId = reader.readStringOrNull(offsets[3]);
   return object;
 }
 
@@ -122,8 +135,10 @@ P _isarCompletedNodeDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readLong(offset)) as P;
+    case 3:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -506,6 +521,160 @@ extension IsarCompletedNodeQueryFilter
   }
 
   QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'imageUrl',
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'imageUrl',
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imageUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'imageUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'imageUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'imageUrl',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'imageUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'imageUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'imageUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'imageUrl',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'imageUrl',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
+      imageUrlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'imageUrl',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterFilterCondition>
       nodeIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -879,6 +1048,20 @@ extension IsarCompletedNodeQueryLinks
 extension IsarCompletedNodeQuerySortBy
     on QueryBuilder<IsarCompletedNode, IsarCompletedNode, QSortBy> {
   QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterSortBy>
+      sortByImageUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imageUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterSortBy>
+      sortByImageUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imageUrl', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterSortBy>
       sortByNodeId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nodeId', Sort.asc);
@@ -937,6 +1120,20 @@ extension IsarCompletedNodeQuerySortThenBy
   }
 
   QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterSortBy>
+      thenByImageUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imageUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterSortBy>
+      thenByImageUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'imageUrl', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QAfterSortBy>
       thenByNodeId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nodeId', Sort.asc);
@@ -982,6 +1179,13 @@ extension IsarCompletedNodeQuerySortThenBy
 extension IsarCompletedNodeQueryWhereDistinct
     on QueryBuilder<IsarCompletedNode, IsarCompletedNode, QDistinct> {
   QueryBuilder<IsarCompletedNode, IsarCompletedNode, QDistinct>
+      distinctByImageUrl({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'imageUrl', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, IsarCompletedNode, QDistinct>
       distinctByNodeId({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nodeId', caseSensitive: caseSensitive);
@@ -1008,6 +1212,13 @@ extension IsarCompletedNodeQueryProperty
   QueryBuilder<IsarCompletedNode, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<IsarCompletedNode, String?, QQueryOperations>
+      imageUrlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'imageUrl');
     });
   }
 

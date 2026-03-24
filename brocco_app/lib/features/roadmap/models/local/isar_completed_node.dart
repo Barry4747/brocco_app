@@ -11,4 +11,5 @@ class IsarCompletedNode {
 
   String? nodeId;
   int starsEarned = 1;
+  String? imageUrl;
 }

@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'isar_provider.dart';
-import 'collections/isar_category.dart';
-import 'collections/isar_unlocked_category.dart';
+import '../../features/home/models/local/isar_category.dart';
+import '../../features/home/models/local/isar_unlocked_category.dart';
 import 'dart:math' as math;
 import '../../shared/models/user_profile.dart';
 
