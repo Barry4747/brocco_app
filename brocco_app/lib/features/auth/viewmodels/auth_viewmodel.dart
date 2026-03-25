@@ -11,13 +11,13 @@ class AuthState {
   final bool? hasProfile;
 
   const AuthState({
-    this.status = AuthStatus.initial, 
+    this.status = AuthStatus.initial,
     this.errorMessage,
     this.hasProfile,
   });
 
   AuthState copyWith({
-    AuthStatus? status, 
+    AuthStatus? status,
     String? errorMessage,
     bool? hasProfile,
   }) {
@@ -36,8 +36,8 @@ final authViewModelProvider = AsyncNotifierProvider<AuthViewModel, AuthState>(
 final userIdProvider = Provider<String?>((ref) {
   final authState = ref.watch(authViewModelProvider);
   return authState.maybeWhen(
-    data: (state) => state.status == AuthStatus.authenticated 
-        ? Supabase.instance.client.auth.currentUser?.id 
+    data: (state) => state.status == AuthStatus.authenticated
+        ? Supabase.instance.client.auth.currentUser?.id
         : null,
     orElse: () => null,
   );
@@ -52,16 +52,17 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
       final session = data.session;
       if (session != null) {
         final hasProfile = await repository.hasProfile(session.user.id);
-        
+
         // Comprehensive sync (Profile, Categories, Progress)
         await ref.read(globalSyncServiceProvider).syncAll(session.user.id);
 
-        state = AsyncValue.data(AuthState(
-          status: AuthStatus.authenticated,
-          hasProfile: hasProfile,
-        ));
+        state = AsyncValue.data(
+          AuthState(status: AuthStatus.authenticated, hasProfile: hasProfile),
+        );
       } else {
-        state = const AsyncValue.data(AuthState(status: AuthStatus.unauthenticated));
+        state = const AsyncValue.data(
+          AuthState(status: AuthStatus.unauthenticated),
+        );
       }
     });
 
@@ -72,7 +73,7 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     final session = repository.currentSession;
     if (session != null) {
       final hasProfile = await repository.hasProfile(session.user.id);
-      
+
       // Comprehensive sync (Profile, Categories, Progress)
       await ref.read(globalSyncServiceProvider).syncAll(session.user.id);
 
@@ -89,10 +90,9 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     final session = repository.currentSession;
     if (session != null) {
       final hasProfile = await repository.hasProfile(session.user.id);
-      state = AsyncValue.data(AuthState(
-        status: AuthStatus.authenticated,
-        hasProfile: hasProfile,
-      ));
+      state = AsyncValue.data(
+        AuthState(status: AuthStatus.authenticated, hasProfile: hasProfile),
+      );
     }
   }
 
@@ -151,7 +151,11 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
         msg.contains('user_already_exists')) {
       return 'Ten email jest już zarejestrowany.';
     }
-    if (msg.contains('network')) {
+    if (msg.contains('network') ||
+        msg.contains('socketexception') ||
+        msg.contains('failed host lookup') ||
+        msg.contains('connection timeout') ||
+        msg.contains('clientexception')) {
       return 'Brak połączenia z internetem.';
     }
     return 'Błąd: $e';

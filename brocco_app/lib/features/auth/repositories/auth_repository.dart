@@ -22,6 +22,14 @@ class AuthRepository {
   Session? get currentSession => _supabase.auth.currentSession;
 
   Future<bool> hasProfile(String userId) async {
+    final localProfile = await _isar.isarProfiles
+        .where()
+        .supabaseUserIdEqualTo(userId)
+        .findFirst();
+
+    if (localProfile != null) {
+      return true;
+    }
     try {
       final res = await _supabase
           .from('profiles')
@@ -70,10 +78,7 @@ class AuthRepository {
   }
 
   Future<void> signUpWithEmail(String email, String password) async {
-    final res = await _supabase.auth.signUp(email: email, password: password);
-    if (res.session == null) {
-      await _supabase.auth.signInWithPassword(email: email, password: password);
-    }
+    await _supabase.auth.signUp(email: email, password: password);
   }
 
   Future<void> signOut() async {

@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_colors.dart';
 
 /// Nagłówek ekranu onboardingu: duży tytuł + opcjonalny podtytuł.
 class OnboardingHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
 
-  const OnboardingHeader({
-    super.key,
-    required this.title,
-    this.subtitle,
-  });
+  const OnboardingHeader({super.key, required this.title, this.subtitle});
 
   @override
   Widget build(BuildContext context) {

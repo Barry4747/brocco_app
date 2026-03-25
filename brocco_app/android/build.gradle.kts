@@ -1,3 +1,5 @@
+import com.android.build.gradle.BaseExtension
+
 allprojects {
     repositories {
         google()
@@ -15,6 +17,22 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+
+subprojects {
+    afterEvaluate {
+        val androidExt = extensions.findByName("android") as? com.android.build.gradle.BaseExtension
+        if (androidExt != null && androidExt.namespace == null) {
+            val currentGroup = project.group.toString()
+            
+            if (currentGroup.isNotBlank()) {
+                androidExt.namespace = currentGroup
+            } else {
+                androidExt.namespace = "dev.isar." + project.name.replace("-", "_")
+            }
+        }
+    }
+}
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

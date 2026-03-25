@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
 import '../models/onboarding_data.dart';
 import '../repositories/onboarding_repository.dart';
@@ -61,18 +60,14 @@ class OnboardingViewModel extends Notifier<OnboardingData> {
       throw Exception("Brakuje celu głównego. $state");
     }
 
-    final supabase = Supabase.instance.client;
-    final user = supabase.auth.currentUser;
+    final userId = ref.read(userIdProvider);
 
-    if (user == null) {
+    if (userId == null) {
       throw Exception("Użytkownik nie jest zalogowany.");
     }
 
     final repository = ref.read(onboardingRepositoryProvider);
-    await repository.completeOnboarding(
-      userId: user.id,
-      data: state,
-    );
+    await repository.completeOnboarding(userId: userId, data: state);
 
     await ref.read(authViewModelProvider.notifier).refreshProfileState();
   }
@@ -80,6 +75,5 @@ class OnboardingViewModel extends Notifier<OnboardingData> {
 
 final onboardingViewModelProvider =
     NotifierProvider<OnboardingViewModel, OnboardingData>(
-  () => OnboardingViewModel(),
-);
-
+      () => OnboardingViewModel(),
+    );

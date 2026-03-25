@@ -8,6 +8,9 @@ import 'dart:math' as math;
 import '../../features/profile/repositories/dtos/isar_profile.dart';
 import '../../features/roadmap/repositories/dtos/isar_completed_node.dart';
 import '../../features/roadmap/repositories/dtos/isar_roadmap_node.dart';
+import '../../features/onboarding/repositories/dtos/isar_allergy.dart';
+import '../../features/onboarding/repositories/dtos/isar_cuisine.dart';
+import '../../features/onboarding/repositories/dtos/isar_ingredient.dart';
 
 class GlobalSyncService {
   final Isar _isar;
@@ -16,13 +19,18 @@ class GlobalSyncService {
   GlobalSyncService(this._isar, this._supabase);
 
   Future<void> syncAll(String userId) async {
-    await Future.wait([
-      _syncCategories(),
-      _syncProfile(userId),
-      _syncUnlockedCategories(userId),
-      _syncAllCompletedNodes(userId),
-      _syncAllRoadmapNodes(),
-    ]);
+    try {
+      await Future.wait([
+        _syncCategories(),
+        _syncProfile(userId),
+        _syncUnlockedCategories(userId),
+        _syncAllCompletedNodes(userId),
+        _syncAllRoadmapNodes(),
+        _syncDictionaries(),
+      ]);
+    } catch (e) {
+      print('Błąd synchronizacji (aplikacja w trybie offline): $e');
+    }
   }
 
   Future<void> _syncCategories() async {
@@ -85,15 +93,18 @@ class GlobalSyncService {
           .where()
           .userIdEqualToAnyCategoryId(userId)
           .findAll();
-      await _isar.isarUnlockedCategorys
-          .deleteAll(existing.map((e) => e.id).toList());
+      await _isar.isarUnlockedCategorys.deleteAll(
+        existing.map((e) => e.id).toList(),
+      );
 
       for (final row in rows) {
         final categoryId = row['category_id'] as String;
-        final existingCat = existing.where((e) => e.categoryId == categoryId).firstOrNull;
+        final existingCat = existing
+            .where((e) => e.categoryId == categoryId)
+            .firstOrNull;
         final incomingCount = (row['completed_nodes_count'] as int?) ?? 0;
-        final resolvedCount = existingCat != null 
-            ? math.max(existingCat.completedNodesCount, incomingCount) 
+        final resolvedCount = existingCat != null
+            ? math.max(existingCat.completedNodesCount, incomingCount)
             : incomingCount;
 
         final entry = IsarUnlockedCategory()
@@ -121,7 +132,9 @@ class GlobalSyncService {
           .where()
           .userIdEqualToAnyNodeId(userId)
           .findAll();
-      await _isar.isarCompletedNodes.deleteAll(existing.map((e) => e.id).toList());
+      await _isar.isarCompletedNodes.deleteAll(
+        existing.map((e) => e.id).toList(),
+      );
 
       for (final row in rows) {
         final entry = IsarCompletedNode()
@@ -149,11 +162,51 @@ class GlobalSyncService {
           ..previewImageUrl = row['preview_image_url'] as String?
           ..mapColumn = (row['map_column'] as int?) ?? 0
           ..mapRow = (row['map_row'] as int?) ?? 0
-          ..prerequisiteIds = (row['prerequisite_ids'] as List<dynamic>?)
+          ..prerequisiteIds =
+              (row['prerequisite_ids'] as List<dynamic>?)
                   ?.map((e) => e as String)
                   .toList() ??
               [];
         await _isar.isarRoadmapNodes.put(node);
+      }
+    });
+  }
+
+  Future<void> _syncDictionaries() async {
+    final futures = await Future.wait([
+      _supabase.from('allergies').select('id, name'),
+      _supabase.from('cuisines').select('id, name'),
+      _supabase.from('ingredients').select('id, name'),
+    ]);
+
+    final allergiesRows = futures[0] as List;
+    final cuisinesRows = futures[1] as List;
+    final ingredientsRows = futures[2] as List;
+
+    await _isar.writeTxn(() async {
+      await _isar.isarAllergys.clear();
+      await _isar.isarCuisines.clear();
+      await _isar.isarIngredients.clear();
+
+      for (final row in allergiesRows) {
+        final item = IsarAllergy()
+          ..supabaseId = row['id'] as String
+          ..name = row['name'] as String;
+        await _isar.isarAllergys.put(item);
+      }
+
+      for (final row in cuisinesRows) {
+        final item = IsarCuisine()
+          ..supabaseId = row['id'] as String
+          ..name = row['name'] as String;
+        await _isar.isarCuisines.put(item);
+      }
+
+      for (final row in ingredientsRows) {
+        final item = IsarIngredient()
+          ..supabaseId = row['id'] as String
+          ..name = row['name'] as String;
+        await _isar.isarIngredients.put(item);
       }
     });
   }

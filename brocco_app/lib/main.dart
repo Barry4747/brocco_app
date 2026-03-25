@@ -12,6 +12,9 @@ import 'features/home/repositories/dtos/isar_unlocked_category.dart';
 import 'features/roadmap/repositories/dtos/isar_roadmap_node.dart';
 import 'features/roadmap/repositories/dtos/isar_completed_node.dart';
 import 'features/profile/repositories/dtos/isar_profile.dart';
+import 'features/onboarding/repositories/dtos/isar_allergy.dart';
+import 'features/onboarding/repositories/dtos/isar_cuisine.dart';
+import 'features/onboarding/repositories/dtos/isar_ingredient.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +32,9 @@ void main() async {
     IsarUnlockedCategorySchema,
     IsarRoadmapNodeSchema,
     IsarCompletedNodeSchema,
+    IsarAllergySchema,
+    IsarCuisineSchema,
+    IsarIngredientSchema,
   ], directory: dir.path);
   runApp(
     ProviderScope(

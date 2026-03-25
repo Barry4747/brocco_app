@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/buttons/main_progress_bar.dart';
-import '../../../../shared/widgets/buttons/onboarding_back_button.dart';
-import '../../../../shared/widgets/buttons/primary_button.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../shared/widgets/buttons/main_progress_bar.dart';
+import 'onboarding_back_button.dart';
+import '../../../../../shared/widgets/buttons/primary_button.dart';
 
 /// Wspólna otoczka dla wszystkich ekranów onboardingu.
 /// Zapewnia spójny układ: back button → progress bar → content → button.
@@ -38,10 +38,7 @@ class OnboardingScreenShell extends StatelessWidget {
         content,
         if (!scrollable) const Spacer(),
         if (scrollable) const SizedBox(height: 40),
-        PrimaryButton(
-          text: primaryButtonText,
-          onPressed: onPrimaryPressed,
-        ),
+        PrimaryButton(text: primaryButtonText, onPressed: onPrimaryPressed),
         const SizedBox(height: 24),
       ],
     );
@@ -51,11 +48,17 @@ class OnboardingScreenShell extends StatelessWidget {
       body: SafeArea(
         child: scrollable
             ? SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
                 child: inner,
               )
             : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
                 child: inner,
               ),
       ),
