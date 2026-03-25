@@ -52,38 +52,54 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   Future<void> _handleEmailAction() async {
     if (!_formKey.currentState!.validate()) return;
     final vm = ref.read(authViewModelProvider.notifier);
+
+    FocusScope.of(context).unfocus();
+
     if (_isLogin) {
-      await vm.signInWithEmail(_emailController.text.trim(), _passwordController.text);
+      await vm.signInWithEmail(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
     } else {
-      await vm.signUpWithEmail(_emailController.text.trim(), _passwordController.text);
-    }
-    if (!mounted) return;
-    _showErrorIfNeeded();
-  }
-
-  Future<void> _handleGoogleSignIn() async {
-    await ref.read(authViewModelProvider.notifier).signInWithGoogle();
-    if (!mounted) return;
-    _showErrorIfNeeded();
-  }
-
-  void _showErrorIfNeeded() {
-    final authState = ref.read(authViewModelProvider).valueOrNull;
-    if (authState == null) return;
-    if (authState.status == AuthStatus.error && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(authState.errorMessage ?? 'Błąd logowania'),
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
+      await vm.signUpWithEmail(
+        _emailController.text.trim(),
+        _passwordController.text,
       );
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    await ref.read(authViewModelProvider.notifier).signInWithGoogle();
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<AuthState>>(authViewModelProvider, (previous, next) {
+      final state = next.valueOrNull;
+
+      if (state != null && state.status == AuthStatus.error) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              state.errorMessage ?? 'Nie udało się zalogować.',
+              style: const TextStyle(
+                color: AppColors.errorRed,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            backgroundColor: AppColors.errorBackground,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    });
+
     final authAsync = ref.watch(authViewModelProvider);
     final isLoading = authAsync.isLoading;
 
@@ -109,10 +125,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         borderRadius: BorderRadius.circular(22),
                       ),
                       child: const Center(
-                        child: Text(
-                          '🥦',
-                          style: TextStyle(fontSize: 38),
-                        ),
+                        child: Text('🥦', style: TextStyle(fontSize: 38)),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -128,10 +141,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                     const SizedBox(height: 4),
                     const Text(
                       'Twój asystent w kuchni',
-                      style: TextStyle(
-                        color: AppColors.greyText,
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(color: AppColors.greyText, fontSize: 15),
                     ),
                   ],
                 ),
@@ -188,7 +198,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                         controller: _passwordController,
                         isPassword: true,
                         validator: (v) {
-                          if (v == null || v.length < 6) return 'Hasło musi mieć min. 6 znaków';
+                          if (v == null || v.length < 6)
+                            return 'Hasło musi mieć min. 6 znaków';
                           return null;
                         },
                       ),
@@ -212,7 +223,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   onTap: isLoading ? null : _switchMode,
                   child: RichText(
                     text: TextSpan(
-                      style: const TextStyle(fontSize: 14, color: AppColors.greyText),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.greyText,
+                      ),
                       children: [
                         TextSpan(
                           text: _isLogin

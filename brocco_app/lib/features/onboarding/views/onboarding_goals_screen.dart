@@ -4,14 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/onboarding_data.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
-import '../widgets/onboarding_header.dart';
-import '../widgets/onboarding_screen_shell.dart';
+import 'widgets/onboarding_header.dart';
+import 'widgets/onboarding_screen_shell.dart';
 
 class OnboardingGoalsScreen extends ConsumerStatefulWidget {
   const OnboardingGoalsScreen({super.key});
 
   @override
-  ConsumerState<OnboardingGoalsScreen> createState() => _OnboardingGoalsScreenState();
+  ConsumerState<OnboardingGoalsScreen> createState() =>
+      _OnboardingGoalsScreenState();
 }
 
 class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
@@ -27,7 +28,9 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
       onPrimaryPressed: _selectedGoal == null
           ? null
           : () {
-              ref.read(onboardingViewModelProvider.notifier).updateBiometrics(mainGoal: _selectedGoal);
+              ref
+                  .read(onboardingViewModelProvider.notifier)
+                  .updateBiometrics(mainGoal: _selectedGoal);
               context.push('/onboarding/step_4');
             },
       content: Column(

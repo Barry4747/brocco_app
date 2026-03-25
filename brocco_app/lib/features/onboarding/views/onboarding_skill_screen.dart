@@ -4,14 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../models/onboarding_data.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
-import '../widgets/onboarding_header.dart';
-import '../widgets/onboarding_screen_shell.dart';
+import 'widgets/onboarding_header.dart';
+import 'widgets/onboarding_screen_shell.dart';
 
 class OnboardingSkillScreen extends ConsumerStatefulWidget {
   const OnboardingSkillScreen({super.key});
 
   @override
-  ConsumerState<OnboardingSkillScreen> createState() => _OnboardingSkillScreenState();
+  ConsumerState<OnboardingSkillScreen> createState() =>
+      _OnboardingSkillScreenState();
 }
 
 class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
@@ -27,7 +28,9 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
       onPrimaryPressed: _selectedSkill == null
           ? null
           : () {
-              ref.read(onboardingViewModelProvider.notifier).updateCookingProfile(skill: _selectedSkill);
+              ref
+                  .read(onboardingViewModelProvider.notifier)
+                  .updateCookingProfile(skill: _selectedSkill);
               context.push('/onboarding/step_2');
             },
       content: Column(
@@ -44,7 +47,8 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
           ),
           SelectionCardWithImage(
             title: 'Domowy kucharz',
-            subtitle: 'Gotuję regularnie i uwielbiam próbować nowych przepisów.',
+            subtitle:
+                'Gotuję regularnie i uwielbiam próbować nowych przepisów.',
             emoji: '🍳',
             isSelected: _selectedSkill == CookingSkill.homeCook,
             onTap: () => setState(() => _selectedSkill = CookingSkill.homeCook),
@@ -54,7 +58,8 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
             subtitle: 'Duszenie i deglazowanie nie mają przede mną tajemnic.',
             emoji: '🔪',
             isSelected: _selectedSkill == CookingSkill.masterchef,
-            onTap: () => setState(() => _selectedSkill = CookingSkill.masterchef),
+            onTap: () =>
+                setState(() => _selectedSkill = CookingSkill.masterchef),
           ),
         ],
       ),

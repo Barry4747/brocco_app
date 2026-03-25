@@ -3,17 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
-import '../widgets/onboarding_header.dart';
-import '../widgets/onboarding_screen_shell.dart';
+import 'widgets/onboarding_header.dart';
+import 'widgets/onboarding_screen_shell.dart';
 
 class OnboardingTastesScreen extends ConsumerStatefulWidget {
   const OnboardingTastesScreen({super.key});
 
   @override
-  ConsumerState<OnboardingTastesScreen> createState() => _OnboardingTastesScreenState();
+  ConsumerState<OnboardingTastesScreen> createState() =>
+      _OnboardingTastesScreenState();
 }
 
-class _OnboardingTastesScreenState extends ConsumerState<OnboardingTastesScreen> {
+class _OnboardingTastesScreenState
+    extends ConsumerState<OnboardingTastesScreen> {
   final List<String> _selectedRules = [];
   final List<String> _availableRules = ['Vegan', 'Keto', 'Bez glutenu', 'Brak'];
 
@@ -45,9 +47,9 @@ class _OnboardingTastesScreenState extends ConsumerState<OnboardingTastesScreen>
       onPrimaryPressed: _selectedRules.isEmpty
           ? null
           : () {
-              ref.read(onboardingViewModelProvider.notifier).updateTastes(
-                    allergies: _selectedRules,
-                  );
+              ref
+                  .read(onboardingViewModelProvider.notifier)
+                  .updateTastes(allergies: _selectedRules);
               context.push('/onboarding/step_3');
             },
       content: Column(
