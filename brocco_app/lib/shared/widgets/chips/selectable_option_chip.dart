@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_colors.dart';
 
-class SelectablePill extends StatelessWidget {
-  final String text;
+class SelectableOptionChip extends StatelessWidget {
+  final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const SelectablePill({
+  const SelectableOptionChip({
     super.key,
-    required this.text,
+    required this.label,
     required this.isSelected,
     required this.onTap,
   });
@@ -19,14 +19,18 @@ class SelectablePill extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryText : Colors.white,
+          color: isSelected
+              ? AppColors.primaryText
+              : Colors.white,
           border: Border.all(
-            color: isSelected ? AppColors.primaryText : AppColors.greyText.withOpacity(0.15),
-            width: 1.5,
+            color: isSelected
+                ? AppColors.primaryText
+                : AppColors.greyText.withOpacity(0.15),
+            width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             if (!isSelected)
               BoxShadow(
@@ -43,11 +47,12 @@ class SelectablePill extends StatelessWidget {
           ],
         ),
         child: Text(
-          text,
+          label,
+          textAlign: TextAlign.center,
           style: TextStyle(
             color: isSelected ? Colors.white : AppColors.primaryText,
-            fontSize: 16,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            fontSize: 15,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
       ),

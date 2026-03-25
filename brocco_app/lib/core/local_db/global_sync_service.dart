@@ -8,6 +8,9 @@ import 'dart:math' as math;
 import '../../features/profile/repositories/dtos/isar_profile.dart';
 import '../../features/roadmap/repositories/dtos/isar_completed_node.dart';
 import '../../features/roadmap/repositories/dtos/isar_roadmap_node.dart';
+import '../../features/onboarding/repositories/dtos/isar_allergy.dart';
+import '../../features/onboarding/repositories/dtos/isar_cuisine.dart';
+import '../../features/onboarding/repositories/dtos/isar_ingredient.dart';
 
 class GlobalSyncService {
   final Isar _isar;
@@ -23,6 +26,7 @@ class GlobalSyncService {
         _syncUnlockedCategories(userId),
         _syncAllCompletedNodes(userId),
         _syncAllRoadmapNodes(),
+        _syncDictionaries(),
       ]);
     } catch (e) {
       print('Błąd synchronizacji (aplikacja w trybie offline): $e');
@@ -164,6 +168,45 @@ class GlobalSyncService {
                   .toList() ??
               [];
         await _isar.isarRoadmapNodes.put(node);
+      }
+    });
+  }
+
+  Future<void> _syncDictionaries() async {
+    final futures = await Future.wait([
+      _supabase.from('allergies').select('id, name'),
+      _supabase.from('cuisines').select('id, name'),
+      _supabase.from('ingredients').select('id, name'),
+    ]);
+
+    final allergiesRows = futures[0] as List;
+    final cuisinesRows = futures[1] as List;
+    final ingredientsRows = futures[2] as List;
+
+    await _isar.writeTxn(() async {
+      await _isar.isarAllergys.clear();
+      await _isar.isarCuisines.clear();
+      await _isar.isarIngredients.clear();
+
+      for (final row in allergiesRows) {
+        final item = IsarAllergy()
+          ..supabaseId = row['id'] as String
+          ..name = row['name'] as String;
+        await _isar.isarAllergys.put(item);
+      }
+
+      for (final row in cuisinesRows) {
+        final item = IsarCuisine()
+          ..supabaseId = row['id'] as String
+          ..name = row['name'] as String;
+        await _isar.isarCuisines.put(item);
+      }
+
+      for (final row in ingredientsRows) {
+        final item = IsarIngredient()
+          ..supabaseId = row['id'] as String
+          ..name = row['name'] as String;
+        await _isar.isarIngredients.put(item);
       }
     });
   }

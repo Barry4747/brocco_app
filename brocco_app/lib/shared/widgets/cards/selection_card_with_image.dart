@@ -28,10 +28,17 @@ class SelectionCardWithImage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
-            color: isSelected ? AppColors.primaryText : AppColors.accentGreen,
+            color: isSelected ? AppColors.primaryText : Colors.transparent,
             width: isSelected ? 2.0 : 1.0, 
           ),
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryText.withOpacity(0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
