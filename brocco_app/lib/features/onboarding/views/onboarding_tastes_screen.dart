@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
-import 'widgets/onboarding_header.dart';
-import 'widgets/onboarding_screen_shell.dart';
+import '../widgets/onboarding_header.dart';
+import '../widgets/onboarding_screen_shell.dart';
 
 class OnboardingTastesScreen extends ConsumerStatefulWidget {
   const OnboardingTastesScreen({super.key});

@@ -2,10 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'isar_provider.dart';
-import '../../features/home/models/local/isar_category.dart';
-import '../../features/home/models/local/isar_unlocked_category.dart';
+import '../../features/home/repositories/dtos/isar_category.dart';
+import '../../features/home/repositories/dtos/isar_unlocked_category.dart';
 import 'dart:math' as math;
-import '../../shared/models/user_profile.dart';
+import '../../features/profile/repositories/dtos/isar_profile.dart';
+import '../../features/roadmap/repositories/dtos/isar_completed_node.dart';
+import '../../features/roadmap/repositories/dtos/isar_roadmap_node.dart';
 
 class GlobalSyncService {
   final Isar _isar;
@@ -18,6 +20,8 @@ class GlobalSyncService {
       _syncCategories(),
       _syncProfile(userId),
       _syncUnlockedCategories(userId),
+      _syncAllCompletedNodes(userId),
+      _syncAllRoadmapNodes(),
     ]);
   }
 
@@ -49,12 +53,12 @@ class GlobalSyncService {
     if (response == null) return;
 
     await _isar.writeTxn(() async {
-      var profile = await _isar.userProfiles
+      var profile = await _isar.isarProfiles
           .where()
           .supabaseUserIdEqualTo(userId)
           .findFirst();
 
-      profile ??= UserProfile()..supabaseUserId = userId;
+      profile ??= IsarProfile()..supabaseUserId = userId;
 
       profile
         ..username = response['username'] as String?
@@ -64,7 +68,7 @@ class GlobalSyncService {
         ..totalXp = (response['total_xp'] as int?) ?? 0
         ..currentStreak = (response['current_streak'] as int?) ?? 0;
 
-      await _isar.userProfiles.put(profile);
+      await _isar.isarProfiles.put(profile);
     });
   }
 
@@ -100,6 +104,56 @@ class GlobalSyncService {
               : null
           ..completedNodesCount = resolvedCount;
         await _isar.isarUnlockedCategorys.put(entry);
+      }
+    });
+  }
+
+  Future<void> _syncAllCompletedNodes(String userId) async {
+    final response = await _supabase
+        .from('user_completed_nodes')
+        .select()
+        .eq('user_id', userId);
+
+    final rows = response as List;
+
+    await _isar.writeTxn(() async {
+      final existing = await _isar.isarCompletedNodes
+          .where()
+          .userIdEqualToAnyNodeId(userId)
+          .findAll();
+      await _isar.isarCompletedNodes.deleteAll(existing.map((e) => e.id).toList());
+
+      for (final row in rows) {
+        final entry = IsarCompletedNode()
+          ..userId = userId
+          ..nodeId = row['node_id'] as String
+          ..starsEarned = (row['stars_earned'] as int?) ?? 1
+          ..imageUrl = row['image_url'] as String?;
+        await _isar.isarCompletedNodes.put(entry);
+      }
+    });
+  }
+
+  Future<void> _syncAllRoadmapNodes() async {
+    final response = await _supabase.from('roadmap_nodes').select();
+    final rows = response as List;
+
+    await _isar.writeTxn(() async {
+      await _isar.isarRoadmapNodes.clear();
+      for (final row in rows) {
+        final node = IsarRoadmapNode()
+          ..supabaseId = row['id'] as String
+          ..categoryId = row['category_id'] as String
+          ..recipeId = row['recipe_id'] as String?
+          ..title = row['title'] as String?
+          ..previewImageUrl = row['preview_image_url'] as String?
+          ..mapColumn = (row['map_column'] as int?) ?? 0
+          ..mapRow = (row['map_row'] as int?) ?? 0
+          ..prerequisiteIds = (row['prerequisite_ids'] as List<dynamic>?)
+                  ?.map((e) => e as String)
+                  .toList() ??
+              [];
+        await _isar.isarRoadmapNodes.put(node);
       }
     });
   }

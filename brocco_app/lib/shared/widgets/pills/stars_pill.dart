@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../models/user_profile.dart';
+import '../../../features/profile/viewmodels/profile_viewmodel.dart';
 
 class StarsPill extends ConsumerWidget {
   final int? initialCount;
@@ -10,7 +10,7 @@ class StarsPill extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profileAsync = ref.watch(userProfileStreamProvider);
+    final profileAsync = ref.watch(userProfileLogicProvider);
     final count = profileAsync.valueOrNull?.starsBank ?? initialCount ?? 0;
 
     return Container(

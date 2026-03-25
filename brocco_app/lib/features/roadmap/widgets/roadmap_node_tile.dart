@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../models/remote/roadmap_node.dart';
+import '../models/roadmap_node.dart';
 
 class RoadmapNodeTile extends StatelessWidget {
   final RoadmapNode node;

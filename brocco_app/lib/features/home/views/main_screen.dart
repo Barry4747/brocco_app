@@ -5,7 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/pills/stars_pill.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
 import '../viewmodels/home_viewmodel.dart';
-import 'widgets/category_card.dart';
+import '../widgets/category_card.dart';
 
 class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
@@ -39,7 +39,19 @@ class MainScreen extends ConsumerWidget {
                     ),
                   ),
                   const StarsPill(),
-                  //tutaj zmiana
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () => context.push('/profile'),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.accentGreen.withValues(alpha: 0.2),
+                      ),
+                      child: const Icon(Icons.person_outline, color: AppColors.primaryOrange),
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.logout, color: AppColors.greyText),

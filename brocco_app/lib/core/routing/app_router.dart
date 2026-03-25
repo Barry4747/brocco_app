@@ -5,6 +5,7 @@ import 'package:brocco_app/features/home/views/main_screen.dart';
 import 'package:brocco_app/features/roadmap/views/roadmap_screen.dart';
 import 'package:brocco_app/features/recipe_detail/views/recipe_detail_screen.dart';
 import 'package:brocco_app/features/game/views/level_completed_screen.dart';
+import 'package:brocco_app/features/profile/views/profile_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_biometric_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_goals_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_skill_screen.dart';
@@ -55,6 +56,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/',
         builder: (context, state) => const MainScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/roadmap/:categoryId',

@@ -1,35 +1,39 @@
-import 'package:isar/isar.dart';
+import '../../features/profile/repositories/dtos/isar_profile.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/local_db/isar_provider.dart';
-
-part 'user_profile.g.dart';
-
-final userProfileStreamProvider = StreamProvider<UserProfile?>((ref) {
-  final isar = ref.watch(isarProvider);
-  final userId = Supabase.instance.client.auth.currentUser?.id;
-  if (userId == null) return Stream.value(null);
-
-  final query = isar.userProfiles.where().supabaseUserIdEqualTo(userId);
-  return query.watch(fireImmediately: true).map((results) => results.firstOrNull);
-});
-
-@collection
 class UserProfile {
-  Id id = Isar.autoIncrement;
+  final String? supabaseUserId;
+  final String? username;
+  final String? avatarUrl;
+  final String? cookingLevel;
+  final List<String> dietaryPreferences;
+  final List<String> allergies;
+  final int starsBank;
+  final int totalXp;
+  final int currentStreak;
 
-  @Index(unique: true)
-  String? supabaseUserId;
+  UserProfile({
+    this.supabaseUserId,
+    this.username,
+    this.avatarUrl,
+    this.cookingLevel,
+    this.dietaryPreferences = const [],
+    this.allergies = const [],
+    this.starsBank = 0,
+    this.totalXp = 0,
+    this.currentStreak = 0,
+  });
 
-  String? username;
-  String? avatarUrl;
-
-  String? cookingLevel;
-  List<String>? dietaryPreferences;
-  List<String>? allergies;
-
-  int starsBank = 0;
-  int totalXp = 0;
-  int currentStreak = 0;
+  factory UserProfile.fromIsar(IsarProfile isar) {
+    return UserProfile(
+      supabaseUserId: isar.supabaseUserId,
+      username: isar.username,
+      avatarUrl: isar.avatarUrl,
+      cookingLevel: isar.cookingLevel,
+      dietaryPreferences: isar.dietaryPreferences ?? [],
+      allergies: isar.allergies ?? [],
+      starsBank: isar.starsBank,
+      totalXp: isar.totalXp,
+      currentStreak: isar.currentStreak,
+    );
+  }
 }

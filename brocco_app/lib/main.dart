@@ -9,11 +9,11 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'core/local_db/isar_provider.dart';
-import 'features/home/models/local/isar_category.dart';
-import 'features/home/models/local/isar_unlocked_category.dart';
-import 'features/roadmap/models/local/isar_roadmap_node.dart';
-import 'features/roadmap/models/local/isar_completed_node.dart';
-import 'shared/models/user_profile.dart';
+import 'features/home/repositories/dtos/isar_category.dart';
+import 'features/home/repositories/dtos/isar_unlocked_category.dart';
+import 'features/roadmap/repositories/dtos/isar_roadmap_node.dart';
+import 'features/roadmap/repositories/dtos/isar_completed_node.dart';
+import 'features/profile/repositories/dtos/isar_profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ void main() async {
   final dir = await getApplicationDocumentsDirectory();
 
   final isarInstance = await Isar.open([
-    UserProfileSchema,
+    IsarProfileSchema,
     IsarCategorySchema,
     IsarUnlockedCategorySchema,
     IsarRoadmapNodeSchema,

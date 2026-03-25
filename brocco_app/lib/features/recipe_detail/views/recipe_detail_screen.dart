@@ -5,10 +5,10 @@ import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/buttons/main_back_button.dart';
 import '../../../shared/widgets/buttons/primary_button.dart';
 import '../viewmodels/recipe_detail_viewmodel.dart';
-import 'widgets/description_tab.dart';
-import 'widgets/ingredients_tab.dart';
-import 'widgets/recipe_tab.dart';
-import 'widgets/info_pills_row.dart';
+import '../widgets/description_tab.dart';
+import '../widgets/ingredients_tab.dart';
+import '../widgets/recipe_tab.dart';
+import '../widgets/info_pills_row.dart';
 
 final _selectedTabProvider = StateProvider.autoDispose<int>((ref) => 0);
 

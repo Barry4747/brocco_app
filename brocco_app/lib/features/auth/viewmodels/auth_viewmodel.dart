@@ -1,7 +1,7 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../repositories/auth_repository.dart';
+import '../../../core/local_db/global_sync_service.dart';
 
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
@@ -33,20 +33,33 @@ final authViewModelProvider = AsyncNotifierProvider<AuthViewModel, AuthState>(
   () => AuthViewModel(),
 );
 
-class AuthViewModel extends AsyncNotifier<AuthState> {
-  final _supabase = Supabase.instance.client;
+final userIdProvider = Provider<String?>((ref) {
+  final authState = ref.watch(authViewModelProvider);
+  return authState.maybeWhen(
+    data: (state) => state.status == AuthStatus.authenticated 
+        ? Supabase.instance.client.auth.currentUser?.id 
+        : null,
+    orElse: () => null,
+  );
+});
 
+class AuthViewModel extends AsyncNotifier<AuthState> {
   @override
   Future<AuthState> build() async {
-    await GoogleSignIn.instance.initialize(
-      serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
-    );
+    final repository = ref.read(authRepositoryProvider);
 
-    final sub = _supabase.auth.onAuthStateChange.listen((data) async {
+    final sub = repository.onAuthStateChange.listen((data) async {
       final session = data.session;
       if (session != null) {
-        final profileState = await _getProfileState(session.user.id);
-        state = AsyncValue.data(profileState);
+        final hasProfile = await repository.hasProfile(session.user.id);
+        
+        // Comprehensive sync (Profile, Categories, Progress)
+        await ref.read(globalSyncServiceProvider).syncAll(session.user.id);
+
+        state = AsyncValue.data(AuthState(
+          status: AuthStatus.authenticated,
+          hasProfile: hasProfile,
+        ));
       } else {
         state = const AsyncValue.data(AuthState(status: AuthStatus.unauthenticated));
       }
@@ -56,50 +69,38 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
       sub.cancel();
     });
 
-    final session = _supabase.auth.currentSession;
+    final session = repository.currentSession;
     if (session != null) {
-      return await _getProfileState(session.user.id);
-    }
-    return const AuthState(status: AuthStatus.unauthenticated);
-  }
-
-  Future<AuthState> _getProfileState(String userId) async {
-    try {
-      final res = await _supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
-      final hasProfile = res != null;
+      final hasProfile = await repository.hasProfile(session.user.id);
+      
+      // Comprehensive sync (Profile, Categories, Progress)
+      await ref.read(globalSyncServiceProvider).syncAll(session.user.id);
 
       return AuthState(
         status: AuthStatus.authenticated,
         hasProfile: hasProfile,
       );
-    } catch (e) {
-      return const AuthState(status: AuthStatus.authenticated, hasProfile: false);
     }
+    return const AuthState(status: AuthStatus.unauthenticated);
   }
 
   Future<void> refreshProfileState() async {
-    final session = _supabase.auth.currentSession;
+    final repository = ref.read(authRepositoryProvider);
+    final session = repository.currentSession;
     if (session != null) {
-      final newState = await _getProfileState(session.user.id);
-      state = AsyncValue.data(newState);
+      final hasProfile = await repository.hasProfile(session.user.id);
+      state = AsyncValue.data(AuthState(
+        status: AuthStatus.authenticated,
+        hasProfile: hasProfile,
+      ));
     }
   }
 
   Future<void> signInWithGoogle() async {
     state = const AsyncValue.loading();
     try {
-      final googleAccount = await GoogleSignIn.instance.authenticate();
-      final googleAuth = await googleAccount.authentication;
-      final idToken = googleAuth.idToken;
-
-      if (idToken == null) {
-        throw Exception('Brak tokena ID od Google');
-      }
-
-      await _supabase.auth.signInWithIdToken(
-        provider: OAuthProvider.google,
-        idToken: idToken,
-      );
+      final repository = ref.read(authRepositoryProvider);
+      await repository.signInWithGoogle();
     } catch (e) {
       state = AsyncValue.data(
         AuthState(status: AuthStatus.error, errorMessage: e.toString()),
@@ -110,7 +111,8 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   Future<void> signInWithEmail(String email, String password) async {
     state = const AsyncValue.loading();
     try {
-      await _supabase.auth.signInWithPassword(email: email, password: password);
+      final repository = ref.read(authRepositoryProvider);
+      await repository.signInWithEmail(email, password);
     } catch (e) {
       state = AsyncValue.data(
         AuthState(status: AuthStatus.error, errorMessage: _mapAuthError(e)),
@@ -121,10 +123,8 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   Future<void> signUpWithEmail(String email, String password) async {
     state = const AsyncValue.loading();
     try {
-      final res = await _supabase.auth.signUp(email: email, password: password);
-      if (res.session == null) {
-        await _supabase.auth.signInWithPassword(email: email, password: password);
-      }
+      final repository = ref.read(authRepositoryProvider);
+      await repository.signUpWithEmail(email, password);
     } catch (e) {
       state = AsyncValue.data(
         AuthState(status: AuthStatus.error, errorMessage: _mapAuthError(e)),
@@ -133,8 +133,8 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
   }
 
   Future<void> signOut() async {
-    await _supabase.auth.signOut();
-    await GoogleSignIn.instance.signOut();
+    final repository = ref.read(authRepositoryProvider);
+    await repository.signOut();
     state = const AsyncValue.data(
       AuthState(status: AuthStatus.unauthenticated),
     );
