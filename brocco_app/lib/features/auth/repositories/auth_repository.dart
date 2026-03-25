@@ -22,6 +22,14 @@ class AuthRepository {
   Session? get currentSession => _supabase.auth.currentSession;
 
   Future<bool> hasProfile(String userId) async {
+    final localProfile = await _isar.isarProfiles
+        .where()
+        .supabaseUserIdEqualTo(userId)
+        .findFirst();
+
+    if (localProfile != null) {
+      return true;
+    }
     try {
       final res = await _supabase
           .from('profiles')

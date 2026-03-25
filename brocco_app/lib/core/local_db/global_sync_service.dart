@@ -16,13 +16,17 @@ class GlobalSyncService {
   GlobalSyncService(this._isar, this._supabase);
 
   Future<void> syncAll(String userId) async {
-    await Future.wait([
-      _syncCategories(),
-      _syncProfile(userId),
-      _syncUnlockedCategories(userId),
-      _syncAllCompletedNodes(userId),
-      _syncAllRoadmapNodes(),
-    ]);
+    try {
+      await Future.wait([
+        _syncCategories(),
+        _syncProfile(userId),
+        _syncUnlockedCategories(userId),
+        _syncAllCompletedNodes(userId),
+        _syncAllRoadmapNodes(),
+      ]);
+    } catch (e) {
+      print('Błąd synchronizacji (aplikacja w trybie offline): $e');
+    }
   }
 
   Future<void> _syncCategories() async {
@@ -85,15 +89,18 @@ class GlobalSyncService {
           .where()
           .userIdEqualToAnyCategoryId(userId)
           .findAll();
-      await _isar.isarUnlockedCategorys
-          .deleteAll(existing.map((e) => e.id).toList());
+      await _isar.isarUnlockedCategorys.deleteAll(
+        existing.map((e) => e.id).toList(),
+      );
 
       for (final row in rows) {
         final categoryId = row['category_id'] as String;
-        final existingCat = existing.where((e) => e.categoryId == categoryId).firstOrNull;
+        final existingCat = existing
+            .where((e) => e.categoryId == categoryId)
+            .firstOrNull;
         final incomingCount = (row['completed_nodes_count'] as int?) ?? 0;
-        final resolvedCount = existingCat != null 
-            ? math.max(existingCat.completedNodesCount, incomingCount) 
+        final resolvedCount = existingCat != null
+            ? math.max(existingCat.completedNodesCount, incomingCount)
             : incomingCount;
 
         final entry = IsarUnlockedCategory()
@@ -121,7 +128,9 @@ class GlobalSyncService {
           .where()
           .userIdEqualToAnyNodeId(userId)
           .findAll();
-      await _isar.isarCompletedNodes.deleteAll(existing.map((e) => e.id).toList());
+      await _isar.isarCompletedNodes.deleteAll(
+        existing.map((e) => e.id).toList(),
+      );
 
       for (final row in rows) {
         final entry = IsarCompletedNode()
@@ -149,7 +158,8 @@ class GlobalSyncService {
           ..previewImageUrl = row['preview_image_url'] as String?
           ..mapColumn = (row['map_column'] as int?) ?? 0
           ..mapRow = (row['map_row'] as int?) ?? 0
-          ..prerequisiteIds = (row['prerequisite_ids'] as List<dynamic>?)
+          ..prerequisiteIds =
+              (row['prerequisite_ids'] as List<dynamic>?)
                   ?.map((e) => e as String)
                   .toList() ??
               [];
