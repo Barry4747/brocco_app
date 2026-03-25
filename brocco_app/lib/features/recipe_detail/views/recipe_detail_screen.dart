@@ -5,17 +5,26 @@ import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/buttons/main_back_button.dart';
 import '../../../shared/widgets/buttons/primary_button.dart';
 import '../viewmodels/recipe_detail_viewmodel.dart';
-import 'widgets/description_tab.dart';
-import 'widgets/ingredients_tab.dart';
-import 'widgets/recipe_tab.dart';
-import 'widgets/info_pills_row.dart';
+import '../widgets/description_tab.dart';
+import '../widgets/ingredients_tab.dart';
+import '../widgets/recipe_tab.dart';
+import '../widgets/info_pills_row.dart';
 
 final _selectedTabProvider = StateProvider.autoDispose<int>((ref) => 0);
 
 class RecipeDetailScreen extends ConsumerWidget {
   final String recipeId;
+  final String? nodeId;
+  final String? categoryId;
+  final String? recipeTitle;
 
-  const RecipeDetailScreen({super.key, required this.recipeId});
+  const RecipeDetailScreen({
+    super.key,
+    required this.recipeId,
+    this.nodeId,
+    this.categoryId,
+    this.recipeTitle,
+  });
 
   static const _tabLabels = ['Opis', 'Składniki', 'Przepis'];
 
@@ -85,8 +94,13 @@ class RecipeDetailScreen extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           child: PrimaryButton(
-            text: 'Gotuj',
-            onPressed: () {},
+            text: 'Rozpocznij gotowanie',
+            onPressed: () {
+              if (nodeId != null && categoryId != null) {
+                final encodedTitle = Uri.encodeComponent(recipeTitle ?? '');
+                context.replace('/game/completed?nodeId=$nodeId&categoryId=$categoryId&recipeTitle=$encodedTitle');
+              }
+            },
           ),
         ),
       ],
@@ -107,7 +121,7 @@ class RecipeDetailScreen extends ConsumerWidget {
                   width: double.infinity,
                   height: 260,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                  errorBuilder: (_, _, _) => _imagePlaceholder(),
                 )
               : _imagePlaceholder(),
         ),

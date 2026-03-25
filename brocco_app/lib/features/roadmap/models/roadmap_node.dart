@@ -1,3 +1,4 @@
+/// Clean App Model for a roadmap node.
 class RoadmapNode {
   final String id;
   final String categoryId;
@@ -18,20 +19,4 @@ class RoadmapNode {
     required this.mapRow,
     this.prerequisiteIds = const [],
   });
-
-  factory RoadmapNode.fromJson(Map<String, dynamic> json) {
-    return RoadmapNode(
-      id: json['id'] as String,
-      categoryId: json['category_id'] as String,
-      recipeId: json['recipe_id'] as String?,
-      title: json['title'] as String,
-      previewImageUrl: json['preview_image_url'] as String?,
-      mapColumn: json['map_column'] as int,
-      mapRow: json['map_row'] as int,
-      prerequisiteIds: (json['prerequisite_ids'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-    );
-  }
 }

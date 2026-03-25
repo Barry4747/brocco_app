@@ -5,9 +5,10 @@ import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/buttons/main_back_button.dart';
 import '../../../shared/widgets/buttons/main_progress_bar.dart';
 import '../../../shared/widgets/pills/stars_pill.dart';
+import '../models/roadmap_data.dart';
 import '../viewmodels/roadmap_viewmodel.dart';
-import 'widgets/connector_line.dart';
-import 'widgets/roadmap_node_tile.dart';
+import '../widgets/connector_line.dart';
+import '../widgets/roadmap_node_tile.dart';
 
 class RoadmapScreen extends ConsumerWidget {
   final String categoryId;
@@ -33,7 +34,7 @@ class RoadmapScreen extends ConsumerWidget {
         child: roadmapAsync.when(
           data: (state) {
             if (state.isEmpty) return _buildEmpty(context, state);
-            return _buildContent(context, state);
+            return _buildContent(context, state, ref);
           },
           loading: () => const Center(
             child: CircularProgressIndicator(color: AppColors.primaryOrange),
@@ -47,7 +48,7 @@ class RoadmapScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmpty(BuildContext context, RoadmapState state) {
+  Widget _buildEmpty(BuildContext context, RoadmapData state) {
     return Column(
       children: [
         Padding(
@@ -86,7 +87,11 @@ class RoadmapScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, RoadmapState state) {
+  Widget _buildContent(
+    BuildContext context,
+    RoadmapData state,
+    WidgetRef ref,
+  ) {
     int maxCol = 0;
     int maxRow = 0;
     for (final node in state.nodes) {
@@ -120,7 +125,7 @@ class RoadmapScreen extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              StarsPill(count: state.currentStars),
+              StarsPill(initialCount: state.currentStars),
             ],
           ),
         ),

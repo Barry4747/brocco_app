@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/buttons/primary_button.dart';
 import '../viewmodels/auth_viewmodel.dart';
@@ -58,20 +57,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     } else {
       await vm.signUpWithEmail(_emailController.text.trim(), _passwordController.text);
     }
-    _checkAuthResult();
+    if (!mounted) return;
+    _showErrorIfNeeded();
   }
 
   Future<void> _handleGoogleSignIn() async {
     await ref.read(authViewModelProvider.notifier).signInWithGoogle();
-    _checkAuthResult();
+    if (!mounted) return;
+    _showErrorIfNeeded();
   }
 
-  void _checkAuthResult() {
+  void _showErrorIfNeeded() {
     final authState = ref.read(authViewModelProvider).valueOrNull;
     if (authState == null) return;
-    if (authState.status == AuthStatus.authenticated) {
-      if (mounted) context.go('/onboarding/step_1');
-    } else if (authState.status == AuthStatus.error && mounted) {
+    if (authState.status == AuthStatus.error && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(authState.errorMessage ?? 'Błąd logowania'),

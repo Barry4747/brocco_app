@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../auth/viewmodels/auth_viewmodel.dart';
 import '../models/onboarding_data.dart';
+import '../repositories/onboarding_repository.dart';
 
 class OnboardingViewModel extends Notifier<OnboardingData> {
   @override
@@ -58,15 +61,25 @@ class OnboardingViewModel extends Notifier<OnboardingData> {
       throw Exception("Brakuje celu głównego. $state");
     }
 
-    print(' Onboarding zakończony sukcesem!');
-    print('Zebrane dane:');
-    print('- Cel: ${state.mainGoal?.name}');
-    print('- Styl jedzenia: ${state.eatingStyle?.name}');
-    print('- Ulubione kuchnie: ${state.favoriteCuisines.join(", ")}');
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("Użytkownik nie jest zalogowany.");
+    }
+
+    final repository = ref.read(onboardingRepositoryProvider);
+    await repository.completeOnboarding(
+      userId: user.id,
+      data: state,
+    );
+
+    await ref.read(authViewModelProvider.notifier).refreshProfileState();
   }
 }
 
 final onboardingViewModelProvider =
     NotifierProvider<OnboardingViewModel, OnboardingData>(
-      () => OnboardingViewModel(),
-    );
+  () => OnboardingViewModel(),
+);
+

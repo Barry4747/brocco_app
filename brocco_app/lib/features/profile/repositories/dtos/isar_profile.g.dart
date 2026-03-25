@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_profile.dart';
+part of 'isar_profile.dart';
 
 // **************************************************************************
 // IsarCollectionGenerator
@@ -9,11 +9,11 @@ part of 'user_profile.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetUserProfileCollection on Isar {
-  IsarCollection<UserProfile> get userProfiles => this.collection();
+extension GetIsarProfileCollection on Isar {
+  IsarCollection<IsarProfile> get isarProfiles => this.collection();
 }
 
-const UserProfileSchema = CollectionSchema(
+const IsarProfileSchema = CollectionSchema(
   name: r'UserProfile',
   id: 4738427352541298891,
   properties: {
@@ -63,10 +63,10 @@ const UserProfileSchema = CollectionSchema(
       type: IsarType.string,
     )
   },
-  estimateSize: _userProfileEstimateSize,
-  serialize: _userProfileSerialize,
-  deserialize: _userProfileDeserialize,
-  deserializeProp: _userProfileDeserializeProp,
+  estimateSize: _isarProfileEstimateSize,
+  serialize: _isarProfileSerialize,
+  deserialize: _isarProfileDeserialize,
+  deserializeProp: _isarProfileDeserializeProp,
   idName: r'id',
   indexes: {
     r'supabaseUserId': IndexSchema(
@@ -85,14 +85,14 @@ const UserProfileSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {},
-  getId: _userProfileGetId,
-  getLinks: _userProfileGetLinks,
-  attach: _userProfileAttach,
+  getId: _isarProfileGetId,
+  getLinks: _isarProfileGetLinks,
+  attach: _isarProfileAttach,
   version: '3.1.0+1',
 );
 
-int _userProfileEstimateSize(
-  UserProfile object,
+int _isarProfileEstimateSize(
+  IsarProfile object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -148,8 +148,8 @@ int _userProfileEstimateSize(
   return bytesCount;
 }
 
-void _userProfileSerialize(
-  UserProfile object,
+void _isarProfileSerialize(
+  IsarProfile object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -165,13 +165,13 @@ void _userProfileSerialize(
   writer.writeString(offsets[8], object.username);
 }
 
-UserProfile _userProfileDeserialize(
+IsarProfile _isarProfileDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = UserProfile();
+  final object = IsarProfile();
   object.allergies = reader.readStringList(offsets[0]);
   object.avatarUrl = reader.readStringOrNull(offsets[1]);
   object.cookingLevel = reader.readStringOrNull(offsets[2]);
@@ -185,7 +185,7 @@ UserProfile _userProfileDeserialize(
   return object;
 }
 
-P _userProfileDeserializeProp<P>(
+P _isarProfileDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -215,25 +215,25 @@ P _userProfileDeserializeProp<P>(
   }
 }
 
-Id _userProfileGetId(UserProfile object) {
+Id _isarProfileGetId(IsarProfile object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _userProfileGetLinks(UserProfile object) {
+List<IsarLinkBase<dynamic>> _isarProfileGetLinks(IsarProfile object) {
   return [];
 }
 
-void _userProfileAttach(
-    IsarCollection<dynamic> col, Id id, UserProfile object) {
+void _isarProfileAttach(
+    IsarCollection<dynamic> col, Id id, IsarProfile object) {
   object.id = id;
 }
 
-extension UserProfileByIndex on IsarCollection<UserProfile> {
-  Future<UserProfile?> getBySupabaseUserId(String? supabaseUserId) {
+extension IsarProfileByIndex on IsarCollection<IsarProfile> {
+  Future<IsarProfile?> getBySupabaseUserId(String? supabaseUserId) {
     return getByIndex(r'supabaseUserId', [supabaseUserId]);
   }
 
-  UserProfile? getBySupabaseUserIdSync(String? supabaseUserId) {
+  IsarProfile? getBySupabaseUserIdSync(String? supabaseUserId) {
     return getByIndexSync(r'supabaseUserId', [supabaseUserId]);
   }
 
@@ -245,13 +245,13 @@ extension UserProfileByIndex on IsarCollection<UserProfile> {
     return deleteByIndexSync(r'supabaseUserId', [supabaseUserId]);
   }
 
-  Future<List<UserProfile?>> getAllBySupabaseUserId(
+  Future<List<IsarProfile?>> getAllBySupabaseUserId(
       List<String?> supabaseUserIdValues) {
     final values = supabaseUserIdValues.map((e) => [e]).toList();
     return getAllByIndex(r'supabaseUserId', values);
   }
 
-  List<UserProfile?> getAllBySupabaseUserIdSync(
+  List<IsarProfile?> getAllBySupabaseUserIdSync(
       List<String?> supabaseUserIdValues) {
     final values = supabaseUserIdValues.map((e) => [e]).toList();
     return getAllByIndexSync(r'supabaseUserId', values);
@@ -267,36 +267,36 @@ extension UserProfileByIndex on IsarCollection<UserProfile> {
     return deleteAllByIndexSync(r'supabaseUserId', values);
   }
 
-  Future<Id> putBySupabaseUserId(UserProfile object) {
+  Future<Id> putBySupabaseUserId(IsarProfile object) {
     return putByIndex(r'supabaseUserId', object);
   }
 
-  Id putBySupabaseUserIdSync(UserProfile object, {bool saveLinks = true}) {
+  Id putBySupabaseUserIdSync(IsarProfile object, {bool saveLinks = true}) {
     return putByIndexSync(r'supabaseUserId', object, saveLinks: saveLinks);
   }
 
-  Future<List<Id>> putAllBySupabaseUserId(List<UserProfile> objects) {
+  Future<List<Id>> putAllBySupabaseUserId(List<IsarProfile> objects) {
     return putAllByIndex(r'supabaseUserId', objects);
   }
 
-  List<Id> putAllBySupabaseUserIdSync(List<UserProfile> objects,
+  List<Id> putAllBySupabaseUserIdSync(List<IsarProfile> objects,
       {bool saveLinks = true}) {
     return putAllByIndexSync(r'supabaseUserId', objects, saveLinks: saveLinks);
   }
 }
 
-extension UserProfileQueryWhereSort
-    on QueryBuilder<UserProfile, UserProfile, QWhere> {
-  QueryBuilder<UserProfile, UserProfile, QAfterWhere> anyId() {
+extension IsarProfileQueryWhereSort
+    on QueryBuilder<IsarProfile, IsarProfile, QWhere> {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 }
 
-extension UserProfileQueryWhere
-    on QueryBuilder<UserProfile, UserProfile, QWhereClause> {
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause> idEqualTo(Id id) {
+extension IsarProfileQueryWhere
+    on QueryBuilder<IsarProfile, IsarProfile, QWhereClause> {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -305,7 +305,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause> idNotEqualTo(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause> idNotEqualTo(
       Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -328,7 +328,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -337,7 +337,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -346,7 +346,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause> idBetween(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -362,7 +362,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause>
       supabaseUserIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -372,7 +372,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause>
       supabaseUserIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.between(
@@ -384,7 +384,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause>
       supabaseUserIdEqualTo(String? supabaseUserId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -394,7 +394,7 @@ extension UserProfileQueryWhere
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterWhereClause>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterWhereClause>
       supabaseUserIdNotEqualTo(String? supabaseUserId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -430,9 +430,9 @@ extension UserProfileQueryWhere
   }
 }
 
-extension UserProfileQueryFilter
-    on QueryBuilder<UserProfile, UserProfile, QFilterCondition> {
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+extension IsarProfileQueryFilter
+    on QueryBuilder<IsarProfile, IsarProfile, QFilterCondition> {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -441,7 +441,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -450,7 +450,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -464,7 +464,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementGreaterThan(
     String value, {
     bool include = false,
@@ -480,7 +480,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementLessThan(
     String value, {
     bool include = false,
@@ -496,7 +496,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementBetween(
     String lower,
     String upper, {
@@ -516,7 +516,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -530,7 +530,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -544,7 +544,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -555,7 +555,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -566,7 +566,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -576,7 +576,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesElementIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -586,7 +586,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -599,7 +599,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -612,7 +612,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -625,7 +625,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesLengthLessThan(
     int length, {
     bool include = false,
@@ -641,7 +641,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesLengthGreaterThan(
     int length, {
     bool include = false,
@@ -657,7 +657,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       allergiesLengthBetween(
     int lower,
     int upper, {
@@ -675,7 +675,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -684,7 +684,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -693,7 +693,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlEqualTo(
     String? value, {
     bool caseSensitive = true,
@@ -707,7 +707,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlGreaterThan(
     String? value, {
     bool include = false,
@@ -723,7 +723,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlLessThan(
     String? value, {
     bool include = false,
@@ -739,7 +739,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlBetween(
     String? lower,
     String? upper, {
@@ -759,7 +759,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -773,7 +773,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -787,7 +787,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -798,7 +798,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -809,7 +809,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -819,7 +819,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       avatarUrlIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -829,7 +829,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -838,7 +838,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -847,7 +847,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelEqualTo(
     String? value, {
     bool caseSensitive = true,
@@ -861,7 +861,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelGreaterThan(
     String? value, {
     bool include = false,
@@ -877,7 +877,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelLessThan(
     String? value, {
     bool include = false,
@@ -893,7 +893,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelBetween(
     String? lower,
     String? upper, {
@@ -913,7 +913,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -927,7 +927,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -941,7 +941,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -952,7 +952,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -963,7 +963,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -973,7 +973,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       cookingLevelIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -983,7 +983,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       currentStreakEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -993,7 +993,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       currentStreakGreaterThan(
     int value, {
     bool include = false,
@@ -1007,7 +1007,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       currentStreakLessThan(
     int value, {
     bool include = false,
@@ -1021,7 +1021,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       currentStreakBetween(
     int lower,
     int upper, {
@@ -1039,7 +1039,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1048,7 +1048,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -1057,7 +1057,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1071,7 +1071,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementGreaterThan(
     String value, {
     bool include = false,
@@ -1087,7 +1087,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementLessThan(
     String value, {
     bool include = false,
@@ -1103,7 +1103,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementBetween(
     String lower,
     String upper, {
@@ -1123,7 +1123,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -1137,7 +1137,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -1151,7 +1151,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementContains(String value,
           {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1163,7 +1163,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementMatches(String pattern,
           {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1175,7 +1175,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1185,7 +1185,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesElementIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -1195,7 +1195,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -1208,7 +1208,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -1221,7 +1221,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -1234,7 +1234,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesLengthLessThan(
     int length, {
     bool include = false,
@@ -1250,7 +1250,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesLengthGreaterThan(
     int length, {
     bool include = false,
@@ -1266,7 +1266,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       dietaryPreferencesLengthBetween(
     int lower,
     int upper, {
@@ -1284,7 +1284,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> idEqualTo(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1294,7 +1294,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -1307,7 +1307,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> idLessThan(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -1320,7 +1320,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> idBetween(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -1337,7 +1337,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       starsBankEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1347,7 +1347,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       starsBankGreaterThan(
     int value, {
     bool include = false,
@@ -1361,7 +1361,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       starsBankLessThan(
     int value, {
     bool include = false,
@@ -1375,7 +1375,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       starsBankBetween(
     int lower,
     int upper, {
@@ -1393,7 +1393,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1402,7 +1402,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -1411,7 +1411,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdEqualTo(
     String? value, {
     bool caseSensitive = true,
@@ -1425,7 +1425,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdGreaterThan(
     String? value, {
     bool include = false,
@@ -1441,7 +1441,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdLessThan(
     String? value, {
     bool include = false,
@@ -1457,7 +1457,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdBetween(
     String? lower,
     String? upper, {
@@ -1477,7 +1477,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -1491,7 +1491,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -1505,7 +1505,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -1516,7 +1516,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -1527,7 +1527,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1537,7 +1537,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       supabaseUserIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -1547,7 +1547,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> totalXpEqualTo(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> totalXpEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1557,7 +1557,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       totalXpGreaterThan(
     int value, {
     bool include = false,
@@ -1571,7 +1571,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> totalXpLessThan(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> totalXpLessThan(
     int value, {
     bool include = false,
   }) {
@@ -1584,7 +1584,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> totalXpBetween(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> totalXpBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -1601,7 +1601,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1610,7 +1610,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -1619,7 +1619,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> usernameEqualTo(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> usernameEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
@@ -1632,7 +1632,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameGreaterThan(
     String? value, {
     bool include = false,
@@ -1648,7 +1648,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameLessThan(
     String? value, {
     bool include = false,
@@ -1664,7 +1664,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> usernameBetween(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> usernameBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1683,7 +1683,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -1697,7 +1697,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -1711,7 +1711,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -1722,7 +1722,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> usernameMatches(
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition> usernameMatches(
       String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1734,7 +1734,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1744,7 +1744,7 @@ extension UserProfileQueryFilter
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterFilterCondition>
       usernameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -1755,246 +1755,246 @@ extension UserProfileQueryFilter
   }
 }
 
-extension UserProfileQueryObject
-    on QueryBuilder<UserProfile, UserProfile, QFilterCondition> {}
+extension IsarProfileQueryObject
+    on QueryBuilder<IsarProfile, IsarProfile, QFilterCondition> {}
 
-extension UserProfileQueryLinks
-    on QueryBuilder<UserProfile, UserProfile, QFilterCondition> {}
+extension IsarProfileQueryLinks
+    on QueryBuilder<IsarProfile, IsarProfile, QFilterCondition> {}
 
-extension UserProfileQuerySortBy
-    on QueryBuilder<UserProfile, UserProfile, QSortBy> {
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByAvatarUrl() {
+extension IsarProfileQuerySortBy
+    on QueryBuilder<IsarProfile, IsarProfile, QSortBy> {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByAvatarUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'avatarUrl', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByAvatarUrlDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByAvatarUrlDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'avatarUrl', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByCookingLevel() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByCookingLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cookingLevel', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy>
       sortByCookingLevelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cookingLevel', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByCurrentStreak() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByCurrentStreak() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentStreak', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy>
       sortByCurrentStreakDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentStreak', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByStarsBank() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByStarsBank() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'starsBank', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByStarsBankDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByStarsBankDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'starsBank', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortBySupabaseUserId() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortBySupabaseUserId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseUserId', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy>
       sortBySupabaseUserIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseUserId', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByTotalXp() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByTotalXp() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalXp', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByTotalXpDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByTotalXpDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalXp', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByUsername() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByUsername() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'username', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByUsernameDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> sortByUsernameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'username', Sort.desc);
     });
   }
 }
 
-extension UserProfileQuerySortThenBy
-    on QueryBuilder<UserProfile, UserProfile, QSortThenBy> {
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByAvatarUrl() {
+extension IsarProfileQuerySortThenBy
+    on QueryBuilder<IsarProfile, IsarProfile, QSortThenBy> {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByAvatarUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'avatarUrl', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByAvatarUrlDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByAvatarUrlDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'avatarUrl', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByCookingLevel() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByCookingLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cookingLevel', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy>
       thenByCookingLevelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cookingLevel', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByCurrentStreak() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByCurrentStreak() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentStreak', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy>
       thenByCurrentStreakDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'currentStreak', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenById() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByStarsBank() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByStarsBank() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'starsBank', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByStarsBankDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByStarsBankDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'starsBank', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenBySupabaseUserId() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenBySupabaseUserId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseUserId', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy>
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy>
       thenBySupabaseUserIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'supabaseUserId', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByTotalXp() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByTotalXp() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalXp', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByTotalXpDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByTotalXpDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalXp', Sort.desc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByUsername() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByUsername() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'username', Sort.asc);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByUsernameDesc() {
+  QueryBuilder<IsarProfile, IsarProfile, QAfterSortBy> thenByUsernameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'username', Sort.desc);
     });
   }
 }
 
-extension UserProfileQueryWhereDistinct
-    on QueryBuilder<UserProfile, UserProfile, QDistinct> {
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByAllergies() {
+extension IsarProfileQueryWhereDistinct
+    on QueryBuilder<IsarProfile, IsarProfile, QDistinct> {
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctByAllergies() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'allergies');
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByAvatarUrl(
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctByAvatarUrl(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'avatarUrl', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByCookingLevel(
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctByCookingLevel(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cookingLevel', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByCurrentStreak() {
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctByCurrentStreak() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'currentStreak');
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct>
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct>
       distinctByDietaryPreferences() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dietaryPreferences');
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByStarsBank() {
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctByStarsBank() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'starsBank');
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctBySupabaseUserId(
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctBySupabaseUserId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'supabaseUserId',
@@ -2002,13 +2002,13 @@ extension UserProfileQueryWhereDistinct
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByTotalXp() {
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctByTotalXp() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totalXp');
     });
   }
 
-  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByUsername(
+  QueryBuilder<IsarProfile, IsarProfile, QDistinct> distinctByUsername(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'username', caseSensitive: caseSensitive);
@@ -2016,66 +2016,66 @@ extension UserProfileQueryWhereDistinct
   }
 }
 
-extension UserProfileQueryProperty
-    on QueryBuilder<UserProfile, UserProfile, QQueryProperty> {
-  QueryBuilder<UserProfile, int, QQueryOperations> idProperty() {
+extension IsarProfileQueryProperty
+    on QueryBuilder<IsarProfile, IsarProfile, QQueryProperty> {
+  QueryBuilder<IsarProfile, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<UserProfile, List<String>?, QQueryOperations>
+  QueryBuilder<IsarProfile, List<String>?, QQueryOperations>
       allergiesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'allergies');
     });
   }
 
-  QueryBuilder<UserProfile, String?, QQueryOperations> avatarUrlProperty() {
+  QueryBuilder<IsarProfile, String?, QQueryOperations> avatarUrlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'avatarUrl');
     });
   }
 
-  QueryBuilder<UserProfile, String?, QQueryOperations> cookingLevelProperty() {
+  QueryBuilder<IsarProfile, String?, QQueryOperations> cookingLevelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cookingLevel');
     });
   }
 
-  QueryBuilder<UserProfile, int, QQueryOperations> currentStreakProperty() {
+  QueryBuilder<IsarProfile, int, QQueryOperations> currentStreakProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'currentStreak');
     });
   }
 
-  QueryBuilder<UserProfile, List<String>?, QQueryOperations>
+  QueryBuilder<IsarProfile, List<String>?, QQueryOperations>
       dietaryPreferencesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dietaryPreferences');
     });
   }
 
-  QueryBuilder<UserProfile, int, QQueryOperations> starsBankProperty() {
+  QueryBuilder<IsarProfile, int, QQueryOperations> starsBankProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'starsBank');
     });
   }
 
-  QueryBuilder<UserProfile, String?, QQueryOperations>
+  QueryBuilder<IsarProfile, String?, QQueryOperations>
       supabaseUserIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'supabaseUserId');
     });
   }
 
-  QueryBuilder<UserProfile, int, QQueryOperations> totalXpProperty() {
+  QueryBuilder<IsarProfile, int, QQueryOperations> totalXpProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totalXp');
     });
   }
 
-  QueryBuilder<UserProfile, String?, QQueryOperations> usernameProperty() {
+  QueryBuilder<IsarProfile, String?, QQueryOperations> usernameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'username');
     });

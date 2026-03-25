@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/recipe.dart';
 import '../models/ingredient.dart';
+import '../repositories/recipe_detail_repository.dart';
 
 class RecipeDetailState {
   final Recipe recipe;
@@ -14,25 +14,13 @@ class RecipeDetailViewModel
     extends FamilyAsyncNotifier<RecipeDetailState, String> {
   @override
   Future<RecipeDetailState> build(String recipeId) async {
-    final supabase = Supabase.instance.client;
+    final repository = ref.read(recipeDetailRepositoryProvider);
+    final result = await repository.getRecipeDetail(recipeId);
 
-    final recipeResponse = await supabase
-        .from('recipes')
-        .select()
-        .eq('id', recipeId)
-        .single();
-    final recipe = Recipe.fromJson(recipeResponse);
-
-    final ingredientsResponse = await supabase
-        .from('ingredients')
-        .select()
-        .eq('recipe_id', recipeId)
-        .order('sort_order', ascending: true);
-    final ingredients = (ingredientsResponse as List)
-        .map((e) => Ingredient.fromJson(e))
-        .toList();
-
-    return RecipeDetailState(recipe: recipe, ingredients: ingredients);
+    return RecipeDetailState(
+      recipe: result.recipe,
+      ingredients: result.ingredients,
+    );
   }
 }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../models/roadmap_node.dart';
+import '../models/roadmap_node.dart';
 
 class RoadmapNodeTile extends StatelessWidget {
   final RoadmapNode node;
@@ -24,7 +24,8 @@ class RoadmapNodeTile extends StatelessWidget {
           ? null
           : () {
               if (node.recipeId != null) {
-                context.push('/recipe/${node.recipeId}');
+                final encodedTitle = Uri.encodeComponent(node.title);
+                context.push('/recipe/${node.recipeId}?nodeId=${node.id}&categoryId=${node.categoryId}&recipeTitle=$encodedTitle');
               }
             },
       child: SizedBox(
@@ -62,7 +63,7 @@ class RoadmapNodeTile extends StatelessWidget {
                             child: Image.network(
                               node.previewImageUrl!,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
+                              errorBuilder: (_, _, _) =>
                                   _nodePlaceholder(isLocked),
                             ),
                           )

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/buttons/main_progress_bar.dart';
-import '../../../../shared/widgets/buttons/primary_button.dart';
-import '../../models/category.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/buttons/main_progress_bar.dart';
+import '../../../shared/widgets/buttons/primary_button.dart';
+import '../models/category.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;
@@ -29,7 +29,7 @@ class CategoryCard extends StatelessWidget {
     if (isLocked) {
       return _buildLockedCard();
     }
-    return _buildUnlockedCard();
+      return _buildUnlockedCard();
   }
 
   Widget _buildUnlockedCard() {
@@ -53,7 +53,7 @@ class CategoryCard extends StatelessWidget {
                   ? Image.network(
                       category.imageUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                      errorBuilder: (_, _, _) => _imagePlaceholder(),
                     )
                   : _imagePlaceholder(),
             ),
@@ -113,7 +113,7 @@ class CategoryCard extends StatelessWidget {
                 ? Image.network(
                     category.imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                    errorBuilder: (_, _, _) => _imagePlaceholder(),
                   )
                 : _imagePlaceholder(),
           ),
