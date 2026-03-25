@@ -53,7 +53,7 @@ class CategoryCard extends StatelessWidget {
                   ? Image.network(
                       category.imageUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                      errorBuilder: (_, _, _) => _imagePlaceholder(),
                     )
                   : _imagePlaceholder(),
             ),
@@ -113,7 +113,7 @@ class CategoryCard extends StatelessWidget {
                 ? Image.network(
                     category.imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                    errorBuilder: (_, _, _) => _imagePlaceholder(),
                   )
                 : _imagePlaceholder(),
           ),

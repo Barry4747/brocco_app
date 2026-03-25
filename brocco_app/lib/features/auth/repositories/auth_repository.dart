@@ -50,10 +50,6 @@ class AuthRepository {
     // 3. Trigger the new Google Auth flow
     final googleAccount = await GoogleSignIn.instance.authenticate();
 
-    if (googleAccount == null) {
-      throw Exception('Logowanie anulowane przez użytkownika');
-    }
-
     // 4. Get the authentication tokens (synchronous in v7+)
     final googleAuth = googleAccount.authentication;
     final idToken = googleAuth.idToken;

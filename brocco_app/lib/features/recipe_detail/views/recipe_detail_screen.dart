@@ -121,7 +121,7 @@ class RecipeDetailScreen extends ConsumerWidget {
                   width: double.infinity,
                   height: 260,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                  errorBuilder: (_, _, _) => _imagePlaceholder(),
                 )
               : _imagePlaceholder(),
         ),

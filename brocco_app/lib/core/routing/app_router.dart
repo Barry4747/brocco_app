@@ -17,7 +17,7 @@ import 'package:brocco_app/features/auth/viewmodels/auth_viewmodel.dart';
 class RouterNotifier extends ChangeNotifier {
   final Ref ref;
   RouterNotifier(this.ref) {
-    ref.listen(authViewModelProvider, (_, __) => notifyListeners());
+    ref.listen(authViewModelProvider, (_, _) => notifyListeners());
   }
 }
 

@@ -63,7 +63,7 @@ class RoadmapNodeTile extends StatelessWidget {
                             child: Image.network(
                               node.previewImageUrl!,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
+                              errorBuilder: (_, _, _) =>
                                   _nodePlaceholder(isLocked),
                             ),
                           )
