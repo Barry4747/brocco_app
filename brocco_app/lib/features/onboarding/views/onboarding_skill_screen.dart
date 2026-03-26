@@ -32,7 +32,6 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
       currentStep: 1,
       totalSteps: 4,
       scrollable: true, // Zmienione na true!
-      onBack: () => context.pop(),
       primaryButtonText: 'Kontynuuj',
       onPrimaryPressed: !isFormValid
           ? null

@@ -9,7 +9,7 @@ import '../../../../../shared/widgets/buttons/primary_button.dart';
 class OnboardingScreenShell extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
-  final VoidCallback onBack;
+  final VoidCallback? onBack;
   final Widget content;
   final String primaryButtonText;
   final VoidCallback? onPrimaryPressed;
@@ -19,7 +19,7 @@ class OnboardingScreenShell extends StatelessWidget {
     super.key,
     required this.currentStep,
     required this.totalSteps,
-    required this.onBack,
+    this.onBack,
     required this.content,
     required this.primaryButtonText,
     required this.onPrimaryPressed,
@@ -31,8 +31,10 @@ class OnboardingScreenShell extends StatelessWidget {
     final inner = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        OnboardingBackButton(onTap: onBack),
-        const SizedBox(height: 24),
+        if (onBack != null) ...[
+          OnboardingBackButton(onTap: onBack!),
+          const SizedBox(height: 24),
+        ],
         MainProgressBar(currentStep: currentStep, totalSteps: totalSteps),
         const SizedBox(height: 40),
         content,
