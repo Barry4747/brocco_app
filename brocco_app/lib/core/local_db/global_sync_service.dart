@@ -12,6 +12,7 @@ import '../../features/onboarding/repositories/dtos/isar_allergy.dart';
 import '../../features/onboarding/repositories/dtos/isar_cuisine.dart';
 import '../../features/onboarding/repositories/dtos/isar_ingredient.dart';
 import '../../features/settings/repositories/dtos/isar_user_ux_preferences.dart';
+import '../../shared/repositories/dtos/isar_recipe.dart';
 
 class GlobalSyncService {
   final Isar _isar;
@@ -29,6 +30,7 @@ class GlobalSyncService {
         _syncAllRoadmapNodes(),
         _syncDictionaries(),
         _syncUserUxPreferences(userId),
+        _syncRecipes(),
       ]);
     } catch (e) {
       print('Błąd synchronizacji (aplikacja w trybie offline): $e');
@@ -236,6 +238,31 @@ class GlobalSyncService {
         ..mascotSounds = (response['mascot_sounds'] as bool?) ?? true;
 
       await _isar.isarUserUxPreferences.put(isar);
+    });
+  }
+
+  Future<void> _syncRecipes() async {
+    final response = await _supabase.from('recipes').select();
+    final rows = response as List;
+
+    await _isar.writeTxn(() async {
+      await _isar.isarRecipes.clear();
+      for (final row in rows) {
+        final recipe = IsarRecipe()
+          ..supabaseId = row['id'] as String
+          ..title = row['title'] as String?
+          ..description = row['description'] as String?
+          ..recipePlaintext = row['recipe_plaintext'] as String?
+          ..imageUrl = row['image_url'] as String?
+          ..difficultyLevel = row['difficulty_level'] as String?
+          ..durationMinutes = row['duration_minutes'] as int?
+          ..youtubeUrl = row['youtube_url'] as String?
+          ..tags = (row['tags'] as List<dynamic>?)?.map((e) => e as String).toList()
+          ..category = row['category'] as String?
+          ..area = row['area'] as String?
+          ..sourceUrl = row['source_url'] as String?;
+        await _isar.isarRecipes.put(recipe);
+      }
     });
   }
 }
