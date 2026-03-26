@@ -11,6 +11,7 @@ import '../../features/roadmap/repositories/dtos/isar_roadmap_node.dart';
 import '../../features/onboarding/repositories/dtos/isar_allergy.dart';
 import '../../features/onboarding/repositories/dtos/isar_cuisine.dart';
 import '../../features/onboarding/repositories/dtos/isar_ingredient.dart';
+import '../../features/settings/repositories/dtos/isar_user_ux_preferences.dart';
 
 class GlobalSyncService {
   final Isar _isar;
@@ -27,6 +28,7 @@ class GlobalSyncService {
         _syncAllCompletedNodes(userId),
         _syncAllRoadmapNodes(),
         _syncDictionaries(),
+        _syncUserUxPreferences(userId),
       ]);
     } catch (e) {
       print('Błąd synchronizacji (aplikacja w trybie offline): $e');
@@ -208,6 +210,32 @@ class GlobalSyncService {
           ..name = row['name'] as String;
         await _isar.isarIngredients.put(item);
       }
+    });
+  }
+
+  Future<void> _syncUserUxPreferences(String userId) async {
+    final response = await _supabase
+        .from('user_ux_preferences')
+        .select()
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (response == null) return;
+
+    await _isar.writeTxn(() async {
+      var isar = await _isar.isarUserUxPreferences
+          .where()
+          .userIdEqualTo(userId)
+          .findFirst();
+
+      isar ??= IsarUserUxPreferences()..userId = userId;
+
+      isar
+        ..keepScreenOn = (response['keep_screen_on'] as bool?) ?? true
+        ..timerAlarms = (response['timer_alarms'] as bool?) ?? true
+        ..mascotSounds = (response['mascot_sounds'] as bool?) ?? true;
+
+      await _isar.isarUserUxPreferences.put(isar);
     });
   }
 }

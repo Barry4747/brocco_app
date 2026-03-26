@@ -54,6 +54,11 @@ class MainScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
+                    icon: const Icon(Icons.settings, color: AppColors.greyText),
+                    onPressed: () => context.push('/settings'),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
                     icon: const Icon(Icons.logout, color: AppColors.greyText),
                     onPressed: () {
                       ref.read(authViewModelProvider.notifier).signOut();
