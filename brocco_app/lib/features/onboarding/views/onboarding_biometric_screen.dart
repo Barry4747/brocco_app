@@ -28,11 +28,23 @@ class _OnboardingBiometricsScreenState
   // Flaga do UI, by zablokować przycisk podczas wysyłania do bazy
   bool _isLoading = false;
 
-  bool get _canProceed =>
-      _selectedGender != null &&
-      _birthDate != null &&
-      _heightController.text.isNotEmpty &&
-      _weightController.text.isNotEmpty;
+  bool _canProceed(bool showTargetWeight) {
+    return _selectedGender != null &&
+        _birthDate != null &&
+        _heightController.text.trim().isNotEmpty &&
+        _weightController.text.trim().isNotEmpty &&
+        (!showTargetWeight || _targetWeightController.text.trim().isNotEmpty);
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -87,9 +99,37 @@ class _OnboardingBiometricsScreenState
         onBack: () => context.pop(),
         scrollable: true,
         primaryButtonText: _isLoading ? 'Zapisywanie...' : 'Zakończ i oblicz',
-        onPrimaryPressed: !_canProceed || _isLoading
+        onPrimaryPressed: !_canProceed(showTargetWeight) || _isLoading
             ? null
             : () async {
+                final height = int.tryParse(_heightController.text.trim());
+                if (height == null || height < 50 || height > 250) {
+                  _showError('Podano nieprawidłowy wzrost (50 - 250 cm).');
+                  return;
+                }
+
+                final weight = double.tryParse(_weightController.text.replaceAll(',', '.').trim());
+                if (weight == null || weight < 20 || weight > 300) {
+                  _showError('Podano nieprawidłową wagę (20 - 300 kg).');
+                  return;
+                }
+
+                double? targetWeight;
+                if (showTargetWeight) {
+                  targetWeight = double.tryParse(_targetWeightController.text.replaceAll(',', '.').trim());
+                  if (targetWeight == null || targetWeight < 20 || targetWeight > 300) {
+                    _showError('Podano nieprawidłową wagę docelową (20 - 300 kg).');
+                    return;
+                  }
+                }
+
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+                if (_birthDate == null || !_birthDate!.isBefore(today)) {
+                  _showError('Data urodzenia musi być z przeszłości.');
+                  return;
+                }
+
                 setState(() => _isLoading = true);
 
                 ref

@@ -75,28 +75,35 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<AuthState>>(authViewModelProvider, (previous, next) {
+      if (next.isLoading) return;
+
       final state = next.valueOrNull;
 
       if (state != null && state.status == AuthStatus.error) {
-        ScaffoldMessenger.of(context).clearSnackBars();
+        final wasLoading = previous?.isLoading ?? false;
+        final wasNotError = previous?.valueOrNull?.status != AuthStatus.error;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              state.errorMessage ?? 'Nie udało się zalogować.',
-              style: const TextStyle(
-                color: AppColors.errorRed,
-                fontWeight: FontWeight.w500,
+        if (wasLoading || wasNotError) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.errorMessage ?? 'Nie udało się zalogować.',
+                style: const TextStyle(
+                  color: AppColors.errorRed,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
+              backgroundColor: AppColors.errorBackground,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              duration: const Duration(seconds: 2),
             ),
-            backgroundColor: AppColors.errorBackground,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+          );
+        }
       }
     });
 
