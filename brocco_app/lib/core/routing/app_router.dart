@@ -14,6 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_tastes_screen.dart';
 import 'package:brocco_app/features/auth/viewmodels/auth_viewmodel.dart';
+import 'package:brocco_app/features/settings/views/settings_screen.dart';
+import 'package:brocco_app/features/browser/views/browser_screen.dart';
 
 class RouterNotifier extends ChangeNotifier {
   final Ref ref;
@@ -61,6 +63,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/browser',
+        builder: (context, state) => const BrowserScreen(),
       ),
       GoRoute(
         path: '/roadmap/:categoryId',

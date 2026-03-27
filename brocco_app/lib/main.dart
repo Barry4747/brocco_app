@@ -15,6 +15,8 @@ import 'features/profile/repositories/dtos/isar_profile.dart';
 import 'features/onboarding/repositories/dtos/isar_allergy.dart';
 import 'features/onboarding/repositories/dtos/isar_cuisine.dart';
 import 'features/onboarding/repositories/dtos/isar_ingredient.dart';
+import 'features/settings/repositories/dtos/isar_user_ux_preferences.dart';
+import 'shared/repositories/dtos/isar_recipe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +37,8 @@ void main() async {
     IsarAllergySchema,
     IsarCuisineSchema,
     IsarIngredientSchema,
+    IsarUserUxPreferencesSchema,
+    IsarRecipeSchema,
   ], directory: dir.path);
   runApp(
     ProviderScope(

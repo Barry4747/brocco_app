@@ -52,6 +52,15 @@ class MainScreen extends ConsumerWidget {
                       child: const Icon(Icons.person_outline, color: AppColors.primaryOrange),
                     ),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.search, color: AppColors.greyText),
+                    onPressed: () => context.push('/browser'),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.settings, color: AppColors.greyText),
+                    onPressed: () => context.push('/settings'),
+                  ),
                   const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.logout, color: AppColors.greyText),

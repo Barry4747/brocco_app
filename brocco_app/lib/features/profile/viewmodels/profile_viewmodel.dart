@@ -42,6 +42,23 @@ class ProfileActionViewModel extends AsyncNotifier<void> {
       state = AsyncValue.error(e, StackTrace.current);
     }
   }
+
+  Future<void> updateAvatar(File photoFile) async {
+    final repository = ref.read(profileRepositoryProvider);
+    final userId = ref.read(userIdProvider);
+    if (userId == null) return;
+
+    try {
+      state = const AsyncValue.loading();
+      await repository.updateAvatar(
+        userId: userId,
+        photoFile: photoFile,
+      );
+      state = const AsyncValue.data(null);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
+  }
 }
 
 final profileActionProvider = AsyncNotifierProvider<ProfileActionViewModel, void>(

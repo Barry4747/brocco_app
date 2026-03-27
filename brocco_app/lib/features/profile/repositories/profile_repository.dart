@@ -107,6 +107,51 @@ class ProfileRepository {
       'total_xp': (profileResponse['total_xp'] as int) + 50,
     }).eq('id', userId);
   }
+
+  Future<void> updateAvatar({
+    required String userId,
+    required File photoFile,
+  }) async {
+    // 1. Compression
+    final targetPath = '${photoFile.absolute.parent.path}/compressed_avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final compressedFile = await FlutterImageCompress.compressAndGetFile(
+      photoFile.absolute.path,
+      targetPath,
+      quality: 70,
+    );
+    final uploadFile = compressedFile != null ? File(compressedFile.path) : photoFile;
+
+    // 2. Supabase Storage Upload
+    final fileName = '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    
+    // Attempt to upload to 'avatars' bucket, if fails fallback to 'meal_photos'
+    String imageUrl;
+    try {
+      await _supabase.storage.from('avatars').upload(fileName, uploadFile);
+      imageUrl = _supabase.storage.from('avatars').getPublicUrl(fileName);
+    } catch (e) {
+      await _supabase.storage.from('meal_photos').upload(fileName, uploadFile);
+      imageUrl = _supabase.storage.from('meal_photos').getPublicUrl(fileName);
+    }
+
+    // 3. Update Local Isar
+    await _isar.writeTxn(() async {
+      final profile = await _isar.isarProfiles
+          .where()
+          .supabaseUserIdEqualTo(userId)
+          .findFirst();
+          
+      if (profile != null) {
+        profile.avatarUrl = imageUrl;
+        await _isar.isarProfiles.put(profile);
+      }
+    });
+
+    // 4. Update Supabase DB
+    await _supabase.from('profiles').update({
+      'avatar_url': imageUrl,
+    }).eq('id', userId);
+  }
 }
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
