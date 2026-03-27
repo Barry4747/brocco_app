@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../shared/widgets/buttons/main_progress_bar.dart';
-import 'onboarding_back_button.dart';
+import '../../../../shared/widgets/buttons/main_back_text_button.dart';
 import '../../../../../shared/widgets/buttons/primary_button.dart';
 
-/// Wspólna otoczka dla wszystkich ekranów onboardingu.
-/// Zapewnia spójny układ: back button → progress bar → content → button.
 class OnboardingScreenShell extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -31,14 +29,27 @@ class OnboardingScreenShell extends StatelessWidget {
     final inner = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (onBack != null) ...[
-          OnboardingBackButton(onTap: onBack!),
-          const SizedBox(height: 24),
-        ],
-        MainProgressBar(currentStep: currentStep, totalSteps: totalSteps),
-        const SizedBox(height: 40),
-        content,
-        if (!scrollable) const Spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (onBack != null) ...[
+              OnboardingBackButton(onTap: onBack!),
+              const SizedBox(width: 8),
+            ],
+            Expanded(
+              child: MainProgressBar(
+                currentStep: currentStep,
+                totalSteps: totalSteps,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24), // Odstęp między górnym paskiem a treścią
+        // POPRAWKA 2: Jeśli ekran NIE jest scrollowalny, `content` musi być owinięty
+        // w Expanded, co zastępuje poprzedniego Spacera(). Dzięki temu treść wypełni
+        // dostępną przestrzeń i wypchnie przycisk na sam dół bez błędów układu.
+        if (scrollable) content else Expanded(child: content),
+
         if (scrollable) const SizedBox(height: 40),
         PrimaryButton(text: primaryButtonText, onPressed: onPrimaryPressed),
         const SizedBox(height: 24),
