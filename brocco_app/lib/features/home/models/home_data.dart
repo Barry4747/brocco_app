@@ -1,6 +1,5 @@
-/// Clean App Model representing the home screen state.
-/// Used by the ViewModel and Views only.
 library;
+
 import 'category.dart';
 
 class HomeData {

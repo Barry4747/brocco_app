@@ -15,20 +15,22 @@ class HomeRepository {
 
   HomeRepository(this._isar, this._syncService);
 
-  /// Reads all home data from the local Isar database.
   Future<HomeData> getHomeDataFromLocal(String? userId) async {
     final isarCats = await _isar.isarCategorys.where().findAll();
-    final categories = isarCats
-        .where((c) => c.supabaseId != null)
-        .map((c) => Category(
-              id: c.supabaseId!,
-              title: c.title ?? '',
-              imageUrl: c.imageUrl,
-              unlockCostStars: c.unlockCostStars,
-              totalNodes: c.totalNodes,
-            ))
-        .toList()
-      ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
+    final categories =
+        isarCats
+            .where((c) => c.supabaseId != null)
+            .map(
+              (c) => Category(
+                id: c.supabaseId!,
+                title: c.title ?? '',
+                imageUrl: c.imageUrl,
+                unlockCostStars: c.unlockCostStars,
+                totalNodes: c.totalNodes,
+              ),
+            )
+            .toList()
+          ..sort((a, b) => a.unlockCostStars.compareTo(b.unlockCostStars));
 
     int stars = 0;
     Set<String> unlockedIds = {};
@@ -70,19 +72,16 @@ class HomeRepository {
     );
   }
 
-  /// Syncs remote data to local, then returns updated local data.
   Future<HomeData> syncAndGetHomeData(String userId) async {
     await _syncService.syncAll(userId);
     return getHomeDataFromLocal(userId);
   }
 
-  /// Unlocks a category: updates local Isar + calls Supabase RPC.
   Future<void> unlockCategory({
     required String userId,
     required String categoryId,
     required int starsCost,
   }) async {
-    // Local Isar update
     await _isar.writeTxn(() async {
       final profile = await _isar.isarProfiles
           .where()
@@ -100,7 +99,6 @@ class HomeRepository {
       await _isar.isarUnlockedCategorys.put(entry);
     });
 
-    // Remote Supabase update
     try {
       await Supabase.instance.client.rpc(
         'unlock_category_secure',

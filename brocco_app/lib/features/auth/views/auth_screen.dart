@@ -120,7 +120,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
             children: [
               const SizedBox(height: 24),
 
-              // --- Logo / brand ---
               Center(
                 child: Column(
                   children: [
@@ -156,7 +155,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
 
               const SizedBox(height: 48),
 
-              // --- Animated mode title ---
               FadeTransition(
                 opacity: _fadeAnim,
                 child: Text(
@@ -171,18 +169,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               ),
               const SizedBox(height: 28),
 
-              // --- Google button ---
               SocialSignInButton(
                 isLoading: isLoading,
                 onPressed: isLoading ? null : _handleGoogleSignIn,
               ),
               const SizedBox(height: 24),
 
-              // --- Divider ---
               const AuthDivider(),
               const SizedBox(height: 24),
 
-              // --- Email/Password form ---
               FadeTransition(
                 opacity: _fadeAnim,
                 child: Form(
@@ -216,7 +211,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
               ),
               const SizedBox(height: 28),
 
-              // --- Primary button ---
               PrimaryButton(
                 text: _isLogin ? 'Zaloguj się' : 'Zarejestruj się',
                 onPressed: isLoading ? null : _handleEmailAction,
@@ -224,7 +218,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
 
               const SizedBox(height: 20),
 
-              // --- Toggle login/register ---
               Center(
                 child: GestureDetector(
                   onTap: isLoading ? null : _switchMode,

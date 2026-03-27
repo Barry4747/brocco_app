@@ -21,14 +21,18 @@ class ProfileRepository {
         .where()
         .supabaseUserIdEqualTo(userId)
         .watch(fireImmediately: true)
-        .map((results) => results.firstOrNull != null 
-            ? UserProfile.fromIsar(results.firstOrNull!) 
-            : null);
+        .map(
+          (results) => results.firstOrNull != null
+              ? UserProfile.fromIsar(results.firstOrNull!)
+              : null,
+        );
   }
 
   Stream<List<CompletedNodeData>> watchGalleryNodes(String userId) async* {
-    final query = _isar.isarCompletedNodes.where().userIdEqualToAnyNodeId(userId);
-    
+    final query = _isar.isarCompletedNodes.where().userIdEqualToAnyNodeId(
+      userId,
+    );
+
     await for (final nodes in query.watch(fireImmediately: true)) {
       final List<CompletedNodeData> mappedNodes = [];
       for (final node in nodes) {
@@ -37,13 +41,15 @@ class ProfileRepository {
             .where()
             .supabaseIdEqualTo(node.nodeId!)
             .findFirst();
-            
-        mappedNodes.add(CompletedNodeData(
-          id: node.nodeId!,
-          title: roadmapNode?.title ?? 'Nieznane danie',
-          imageUrl: node.imageUrl ?? roadmapNode?.previewImageUrl,
-          hasUserPhoto: node.imageUrl != null,
-        ));
+
+        mappedNodes.add(
+          CompletedNodeData(
+            id: node.nodeId!,
+            title: roadmapNode?.title ?? 'Nieznane danie',
+            imageUrl: node.imageUrl ?? roadmapNode?.previewImageUrl,
+            hasUserPhoto: node.imageUrl != null,
+          ),
+        );
       }
       yield mappedNodes;
     }
@@ -54,21 +60,23 @@ class ProfileRepository {
     required String nodeId,
     required File photoFile,
   }) async {
-    // 1. Compression
-    final targetPath = '${photoFile.absolute.parent.path}/compressed_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final targetPath =
+        '${photoFile.absolute.parent.path}/compressed_${DateTime.now().millisecondsSinceEpoch}.jpg';
     final compressedFile = await FlutterImageCompress.compressAndGetFile(
       photoFile.absolute.path,
       targetPath,
       quality: 70,
     );
-    final uploadFile = compressedFile != null ? File(compressedFile.path) : photoFile;
+    final uploadFile = compressedFile != null
+        ? File(compressedFile.path)
+        : photoFile;
 
-    // 2. Supabase Storage Upload
     final fileName = '$userId/${DateTime.now().millisecondsSinceEpoch}.jpg';
     await _supabase.storage.from('meal_photos').upload(fileName, uploadFile);
-    final imageUrl = _supabase.storage.from('meal_photos').getPublicUrl(fileName);
+    final imageUrl = _supabase.storage
+        .from('meal_photos')
+        .getPublicUrl(fileName);
 
-    // 3. Update Local Isar
     await _isar.writeTxn(() async {
       final completedNode = await _isar.isarCompletedNodes
           .where()
@@ -79,12 +87,12 @@ class ProfileRepository {
       if (completedNode != null && completedNode.imageUrl == null) {
         completedNode.imageUrl = imageUrl;
         await _isar.isarCompletedNodes.put(completedNode);
-        
+
         final profile = await _isar.isarProfiles
             .where()
             .supabaseUserIdEqualTo(userId)
             .findFirst();
-            
+
         if (profile != null) {
           profile.totalXp += 50;
           await _isar.isarProfiles.put(profile);
@@ -92,39 +100,42 @@ class ProfileRepository {
       }
     });
 
-    // 4. Update Supabase DB
-    await _supabase.from('user_completed_nodes').update({
-      'image_url': imageUrl,
-    }).eq('user_id', userId).eq('node_id', nodeId);
+    await _supabase
+        .from('user_completed_nodes')
+        .update({'image_url': imageUrl})
+        .eq('user_id', userId)
+        .eq('node_id', nodeId);
 
     final profileResponse = await _supabase
         .from('profiles')
         .select('total_xp')
         .eq('id', userId)
         .single();
-        
-    await _supabase.from('profiles').update({
-      'total_xp': (profileResponse['total_xp'] as int) + 50,
-    }).eq('id', userId);
+
+    await _supabase
+        .from('profiles')
+        .update({'total_xp': (profileResponse['total_xp'] as int) + 50})
+        .eq('id', userId);
   }
 
   Future<void> updateAvatar({
     required String userId,
     required File photoFile,
   }) async {
-    // 1. Compression
-    final targetPath = '${photoFile.absolute.parent.path}/compressed_avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final targetPath =
+        '${photoFile.absolute.parent.path}/compressed_avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
     final compressedFile = await FlutterImageCompress.compressAndGetFile(
       photoFile.absolute.path,
       targetPath,
       quality: 70,
     );
-    final uploadFile = compressedFile != null ? File(compressedFile.path) : photoFile;
+    final uploadFile = compressedFile != null
+        ? File(compressedFile.path)
+        : photoFile;
 
-    // 2. Supabase Storage Upload
-    final fileName = '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    
-    // Attempt to upload to 'avatars' bucket, if fails fallback to 'meal_photos'
+    final fileName =
+        '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
+
     String imageUrl;
     try {
       await _supabase.storage.from('avatars').upload(fileName, uploadFile);
@@ -134,29 +145,25 @@ class ProfileRepository {
       imageUrl = _supabase.storage.from('meal_photos').getPublicUrl(fileName);
     }
 
-    // 3. Update Local Isar
     await _isar.writeTxn(() async {
       final profile = await _isar.isarProfiles
           .where()
           .supabaseUserIdEqualTo(userId)
           .findFirst();
-          
+
       if (profile != null) {
         profile.avatarUrl = imageUrl;
         await _isar.isarProfiles.put(profile);
       }
     });
 
-    // 4. Update Supabase DB
-    await _supabase.from('profiles').update({
-      'avatar_url': imageUrl,
-    }).eq('id', userId);
+    await _supabase
+        .from('profiles')
+        .update({'avatar_url': imageUrl})
+        .eq('id', userId);
   }
 }
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  return ProfileRepository(
-    ref.watch(isarProvider),
-    Supabase.instance.client,
-  );
+  return ProfileRepository(ref.watch(isarProvider), Supabase.instance.client);
 });

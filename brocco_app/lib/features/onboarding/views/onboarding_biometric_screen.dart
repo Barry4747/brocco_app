@@ -25,7 +25,6 @@ class _OnboardingBiometricsScreenState
   DateTime? _birthDate;
   ActivityLevel _activityLevel = ActivityLevel.moderate;
 
-  // Flaga do UI, by zablokować przycisk podczas wysyłania do bazy
   bool _isLoading = false;
 
   bool _canProceed(bool showTargetWeight) {
@@ -39,10 +38,7 @@ class _OnboardingBiometricsScreenState
   void _showError(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.redAccent,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
     );
   }
 
@@ -57,18 +53,16 @@ class _OnboardingBiometricsScreenState
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(
-        const Duration(days: 365 * 25),
-      ), // Domyślnie 25 lat
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 25)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: AppColors.accentGreen, // Nagłówek i zaznaczenie
-              onPrimary: Colors.white, // Tekst na nagłówku
-              onSurface: AppColors.primaryText, // Dni miesiąca
+              primary: AppColors.accentGreen,
+              onPrimary: Colors.white,
+              onSurface: AppColors.primaryText,
             ),
           ),
           child: child!,
@@ -84,8 +78,6 @@ class _OnboardingBiometricsScreenState
 
   @override
   Widget build(BuildContext context) {
-    // Sprawdzamy cel z poprzedniego ekranu. Jeśli ktoś chce schudnąć/przybrać,
-    // pokażemy mu pole "Waga docelowa".
     final onboardingData = ref.watch(onboardingViewModelProvider);
     final showTargetWeight =
         onboardingData.mainGoal == MainGoal.loseWeight ||
@@ -108,7 +100,9 @@ class _OnboardingBiometricsScreenState
                   return;
                 }
 
-                final weight = double.tryParse(_weightController.text.replaceAll(',', '.').trim());
+                final weight = double.tryParse(
+                  _weightController.text.replaceAll(',', '.').trim(),
+                );
                 if (weight == null || weight < 20 || weight > 300) {
                   _showError('Podano nieprawidłową wagę (20 - 300 kg).');
                   return;
@@ -116,9 +110,15 @@ class _OnboardingBiometricsScreenState
 
                 double? targetWeight;
                 if (showTargetWeight) {
-                  targetWeight = double.tryParse(_targetWeightController.text.replaceAll(',', '.').trim());
-                  if (targetWeight == null || targetWeight < 20 || targetWeight > 300) {
-                    _showError('Podano nieprawidłową wagę docelową (20 - 300 kg).');
+                  targetWeight = double.tryParse(
+                    _targetWeightController.text.replaceAll(',', '.').trim(),
+                  );
+                  if (targetWeight == null ||
+                      targetWeight < 20 ||
+                      targetWeight > 300) {
+                    _showError(
+                      'Podano nieprawidłową wagę docelową (20 - 300 kg).',
+                    );
                     return;
                   }
                 }
@@ -174,7 +174,6 @@ class _OnboardingBiometricsScreenState
             ),
             const SizedBox(height: 32),
 
-            // PŁEĆ
             const _Label('Płeć'),
             SegmentedButton<Gender>(
               style: SegmentedButton.styleFrom(
@@ -200,7 +199,6 @@ class _OnboardingBiometricsScreenState
             ),
             const SizedBox(height: 24),
 
-            // DATA URODZENIA
             const _Label('Data urodzenia'),
             GestureDetector(
               onTap: () => _selectDate(context),
@@ -248,7 +246,6 @@ class _OnboardingBiometricsScreenState
             ),
             const SizedBox(height: 24),
 
-            // Wzrost i Waga (Aktualna)
             Row(
               children: [
                 Expanded(
@@ -269,7 +266,6 @@ class _OnboardingBiometricsScreenState
               ],
             ),
 
-            // Waga Docelowa (Pokazywana tylko jeśli chcą schudnąć/przytyć)
             if (showTargetWeight) ...[
               const SizedBox(height: 16),
               _BiometricField(
@@ -281,16 +277,13 @@ class _OnboardingBiometricsScreenState
 
             const SizedBox(height: 24),
 
-            // AKTYWNOŚĆ
             const _Label('Aktywność fizyczna'),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.greyText.withOpacity(0.3),
-                ),
+                border: Border.all(color: AppColors.greyText.withOpacity(0.3)),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primaryText.withOpacity(0.04),
@@ -334,8 +327,6 @@ class _OnboardingBiometricsScreenState
   }
 }
 
-// --- Drobne widgety pomocnicze do czyszczenia kodu ---
-
 class _Label extends StatelessWidget {
   final String text;
   const _Label(this.text);
@@ -378,7 +369,10 @@ class _BiometricField extends StatelessWidget {
         labelStyle: const TextStyle(color: AppColors.greyText, fontSize: 14),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: AppColors.greyText.withOpacity(0.3)),

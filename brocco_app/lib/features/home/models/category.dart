@@ -1,5 +1,3 @@
-/// Clean App Model for a food category.
-/// Used by ViewModels and Views only — no JSON/DB logic.
 class Category {
   final String id;
   final String title;

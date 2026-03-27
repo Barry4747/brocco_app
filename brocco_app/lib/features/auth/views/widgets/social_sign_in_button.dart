@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import '../../../../core/theme/app_colors.dart';
 
-/// Przycisk logowania przez Google – spójny ze stylem aplikacji.
 class SocialSignInButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
@@ -29,7 +28,10 @@ class SocialSignInButton extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
-                side: const BorderSide(color: AppColors.accentGreen, width: 1.5),
+                side: const BorderSide(
+                  color: AppColors.accentGreen,
+                  width: 1.5,
+                ),
               ),
             ),
     );

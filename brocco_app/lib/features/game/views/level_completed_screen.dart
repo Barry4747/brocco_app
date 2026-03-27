@@ -24,7 +24,6 @@ class LevelCompletedScreen extends ConsumerStatefulWidget {
       _LevelCompletedScreenState();
 }
 
-
 class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
   File? _capturedImage;
   final ImagePicker _picker = ImagePicker();
@@ -51,11 +50,19 @@ class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.primaryOrange),
-                title: const Text('Zrób zdjęcie', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(
+                  Icons.camera_alt,
+                  color: AppColors.primaryOrange,
+                ),
+                title: const Text(
+                  'Zrób zdjęcie',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 onTap: () async {
                   Navigator.pop(context);
-                  final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+                  final XFile? photo = await _picker.pickImage(
+                    source: ImageSource.camera,
+                  );
                   if (photo != null) {
                     setState(() {
                       _capturedImage = File(photo.path);
@@ -64,11 +71,19 @@ class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.primaryOrange),
-                title: const Text('Wybierz z galerii', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(
+                  Icons.photo_library,
+                  color: AppColors.primaryOrange,
+                ),
+                title: const Text(
+                  'Wybierz z galerii',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 onTap: () async {
                   Navigator.pop(context);
-                  final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                  final XFile? image = await _picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
                   if (image != null) {
                     setState(() {
                       _capturedImage = File(image.path);
@@ -86,7 +101,7 @@ class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2FAF5), // Light greenish background
+      backgroundColor: const Color(0xFFF2FAF5),
       body: SafeArea(
         child: Column(
           children: [
@@ -97,22 +112,18 @@ class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 40),
-                      // Hardcoded placeholder for mascot image for now
                       Image.asset(
                         'assets/images/characters/mascot_happy.png',
                         height: 180,
                         errorBuilder: (context, error, stackTrace) =>
-                            const Text(
-                          '🥦',
-                          style: TextStyle(fontSize: 120),
-                        ),
+                            const Text('🥦', style: TextStyle(fontSize: 120)),
                       ),
                       const SizedBox(height: 24),
                       const Text(
                         'Poziom ukończony!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: AppColors.primaryText, // Assuming dark green
+                          color: AppColors.primaryText,
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                           height: 1.1,
@@ -225,7 +236,9 @@ class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
                             color: Colors.white.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: AppColors.accentGreen.withValues(alpha: 0.5),
+                              color: AppColors.accentGreen.withValues(
+                                alpha: 0.5,
+                              ),
                               width: 2,
                             ),
                           ),
@@ -245,7 +258,9 @@ class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
                                       width: 64,
                                       height: 64,
                                       decoration: BoxDecoration(
-                                        color: AppColors.accentGreen.withValues(alpha: 0.1),
+                                        color: AppColors.accentGreen.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: const Center(
@@ -290,11 +305,13 @@ class _LevelCompletedScreenState extends ConsumerState<LevelCompletedScreen> {
                 text: 'Odbierz nagrody i zakończ',
                 onPressed: () {
                   if (_capturedImage != null) {
-                    ref.read(levelCompletedViewModelProvider.notifier).uploadMealPhoto(
-                      widget.nodeId,
-                      widget.categoryId,
-                      _capturedImage!,
-                    );
+                    ref
+                        .read(levelCompletedViewModelProvider.notifier)
+                        .uploadMealPhoto(
+                          widget.nodeId,
+                          widget.categoryId,
+                          _capturedImage!,
+                        );
                   }
                   context.go('/roadmap/${widget.categoryId}');
                 },

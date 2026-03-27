@@ -1,4 +1,3 @@
-/// Clean App Model for a roadmap node.
 class RoadmapNode {
   final String id;
   final String categoryId;

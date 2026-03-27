@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/widgets/buttons/main_back_button.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
 import '../viewmodels/settings_viewmodel.dart';
 
@@ -21,11 +19,8 @@ class SettingsScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
               Row(
                 children: [
-                  MainBackButton(onPressed: () => context.pop()),
-                  const SizedBox(width: 16),
                   const Text(
                     'Ustawienia Kuchni',
                     style: TextStyle(
@@ -38,7 +33,6 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
 
-              // Premium Banner
               _buildPremiumBanner(),
               const SizedBox(height: 32),
 
@@ -50,7 +44,6 @@ class SettingsScreen extends ConsumerWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Section: Podczas gotowania
                       _buildSectionHeader('Podczas gotowania'),
                       _buildSectionCard([
                         _buildSwitchTile(
@@ -82,7 +75,6 @@ class SettingsScreen extends ConsumerWidget {
                       ]),
                       const SizedBox(height: 32),
 
-                      // Section: Preferencje
                       _buildSectionHeader('Preferencje'),
                       _buildSectionCard([
                         Padding(
@@ -110,10 +102,11 @@ class SettingsScreen extends ConsumerWidget {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    // Placeholder for edit diet
-                                  },
-                                  icon: const Icon(Icons.lock_outline, size: 18),
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.lock_outline,
+                                    size: 18,
+                                  ),
                                   label: const Text('Edytuj diety'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primaryOrange,
@@ -121,7 +114,9 @@ class SettingsScreen extends ConsumerWidget {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -131,28 +126,43 @@ class SettingsScreen extends ConsumerWidget {
                       ]),
                       const SizedBox(height: 32),
 
-                      // Section: Konto
                       _buildSectionHeader('Konto'),
                       _buildSectionCard([
                         ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 8,
+                          ),
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: AppColors.accentGreen.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(Icons.refresh, color: AppColors.accentGreen),
+                            child: const Icon(
+                              Icons.refresh,
+                              color: AppColors.accentGreen,
+                            ),
                           ),
                           title: const Text(
                             'Przywróć zakupy',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryText),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryText,
+                            ),
                           ),
                           subtitle: const Text(
                             'Odzyskaj subskrypcje Pro',
-                            style: TextStyle(fontSize: 12, color: AppColors.greyText),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.greyText,
+                            ),
                           ),
-                          trailing: const Icon(Icons.chevron_right, color: AppColors.greyText, size: 16),
+                          trailing: const Icon(
+                            Icons.chevron_right,
+                            color: AppColors.greyText,
+                            size: 16,
+                          ),
                           onTap: () {},
                         ),
                       ]),
@@ -165,10 +175,10 @@ class SettingsScreen extends ConsumerWidget {
 
               const SizedBox(height: 40),
 
-              // Logout Button
               Center(
                 child: TextButton.icon(
-                  onPressed: () => ref.read(authViewModelProvider.notifier).signOut(),
+                  onPressed: () =>
+                      ref.read(authViewModelProvider.notifier).signOut(),
                   icon: const Icon(Icons.logout, color: Colors.redAccent),
                   label: const Text(
                     'Wyloguj się',
@@ -180,7 +190,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 110),
             ],
           ),
         ),
@@ -234,10 +244,7 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(height: 4),
                 const Text(
                   'Wszystkie światy kulinarne, bez limitów gwiazdek!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ],
             ),
@@ -287,9 +294,7 @@ class SettingsScreen extends ConsumerWidget {
           width: 2,
         ),
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 

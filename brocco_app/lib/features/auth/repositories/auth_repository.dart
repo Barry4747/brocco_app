@@ -43,7 +43,6 @@ class AuthRepository {
   }
 
   Future<void> signInWithGoogle() async {
-    // 1. Fetch the Web Client ID from the .env file
     final webClientId = dotenv.env['GOOGLE_WEB_CLIENT_ID'];
 
     if (webClientId == null || webClientId.isEmpty) {
@@ -52,13 +51,10 @@ class AuthRepository {
       );
     }
 
-    // 2. Initialize the Singleton (MANDATORY in v7.0.0+)
     await GoogleSignIn.instance.initialize(serverClientId: webClientId);
 
-    // 3. Trigger the new Google Auth flow
     final googleAccount = await GoogleSignIn.instance.authenticate();
 
-    // 4. Get the authentication tokens (synchronous in v7+)
     final googleAuth = googleAccount.authentication;
     final idToken = googleAuth.idToken;
 
@@ -66,7 +62,6 @@ class AuthRepository {
       throw Exception('Brak tokena ID od Google');
     }
 
-    // 5. Authenticate with Supabase
     await _supabase.auth.signInWithIdToken(
       provider: OAuthProvider.google,
       idToken: idToken,
@@ -84,10 +79,8 @@ class AuthRepository {
   Future<void> signOut() async {
     await _supabase.auth.signOut();
 
-    // Fixed for v7+: Use the singleton instance
     await GoogleSignIn.instance.signOut();
 
-    // Clear all cached Isar data
     await _isar.writeTxn(() async {
       await _isar.isarProfiles.clear();
       await _isar.isarCategorys.clear();

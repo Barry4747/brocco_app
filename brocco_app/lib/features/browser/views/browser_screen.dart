@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/widgets/buttons/main_back_button.dart';
 import '../viewmodels/browser_viewmodel.dart';
 import '../widgets/recipe_browser_card.dart';
 
@@ -19,13 +17,10 @@ class BrowserScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Search Header
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Row(
                 children: [
-                  MainBackButton(onPressed: () => context.pop()),
-                  const SizedBox(width: 12),
                   const Text(
                     'Odkrywaj przepisy',
                     style: TextStyle(
@@ -38,14 +33,15 @@ class BrowserScreen extends ConsumerWidget {
               ),
             ),
 
-            // Search Input
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.accentGreen.withOpacity(0.3)),
+                  border: Border.all(
+                    color: AppColors.accentGreen.withOpacity(0.3),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -58,7 +54,10 @@ class BrowserScreen extends ConsumerWidget {
                   onChanged: viewModel.setSearchQuery,
                   decoration: const InputDecoration(
                     hintText: 'Czego dzisiaj szukasz, Szefie?',
-                    hintStyle: TextStyle(color: AppColors.greyText, fontSize: 14),
+                    hintStyle: TextStyle(
+                      color: AppColors.greyText,
+                      fontSize: 14,
+                    ),
                     prefixIcon: Icon(Icons.search, color: AppColors.greyText),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 14),
@@ -69,7 +68,6 @@ class BrowserScreen extends ConsumerWidget {
 
             const SizedBox(height: 16),
 
-            // Results Counter
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Align(
@@ -87,32 +85,35 @@ class BrowserScreen extends ConsumerWidget {
 
             const SizedBox(height: 16),
 
-            // Recipes List
             Expanded(
               child: browserState.isLoading
-                  ? const Center(child: CircularProgressIndicator(color: AppColors.primaryOrange))
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryOrange,
+                      ),
+                    )
                   : browserState.errorMessage != null
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Text(
-                              browserState.errorMessage!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.redAccent),
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          itemCount: browserState.filteredRecipes.length,
-                          itemBuilder: (context, index) {
-                            final recipe = browserState.filteredRecipes[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 24),
-                              child: RecipeBrowserCard(recipe: recipe),
-                            );
-                          },
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Text(
+                          browserState.errorMessage!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.redAccent),
                         ),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 110),
+                      itemCount: browserState.filteredRecipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = browserState.filteredRecipes[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          child: RecipeBrowserCard(recipe: recipe),
+                        );
+                      },
+                    ),
             ),
           ],
         ),

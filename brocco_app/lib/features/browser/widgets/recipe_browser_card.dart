@@ -11,7 +11,9 @@ class RecipeBrowserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push('/recipe/${recipe.id}?recipeTitle=${Uri.encodeComponent(recipe.title)}'),
+      onTap: () => context.push(
+        '/recipe/${recipe.id}?recipeTitle=${Uri.encodeComponent(recipe.title)}',
+      ),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -31,7 +33,6 @@ class RecipeBrowserCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Section with Badges
             _buildHeroImage(context),
 
             Padding(
@@ -60,22 +61,21 @@ class RecipeBrowserCard extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 16),
-                  
-                  // Pills and Difficulty
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Tags
                       Expanded(
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: (recipe.tags ?? []).map((tag) => _buildSmallTag(tag)).toList(),
+                            children: (recipe.tags ?? [])
+                                .map((tag) => _buildSmallTag(tag))
+                                .toList(),
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Difficulty
                       _buildDifficultyRating(),
                     ],
                   ),
@@ -102,12 +102,12 @@ class RecipeBrowserCard extends StatelessWidget {
                   width: double.infinity,
                   height: 180,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildPlaceholder(),
                 )
               : _buildPlaceholder(),
         ),
-        
-        // "NOWE" Badge (Top Left) - Optional logic if we had a created_at
+
         Positioned(
           top: 12,
           left: 12,
@@ -128,7 +128,6 @@ class RecipeBrowserCard extends StatelessWidget {
           ),
         ),
 
-        // Duration Badge (Top Right)
         Positioned(
           top: 12,
           right: 12,
@@ -141,7 +140,11 @@ class RecipeBrowserCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.access_time, size: 14, color: Color(0xFF003D2B)),
+                const Icon(
+                  Icons.access_time,
+                  size: 14,
+                  color: Color(0xFF003D2B),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   '${recipe.durationMinutes ?? 0} min',
@@ -164,7 +167,9 @@ class RecipeBrowserCard extends StatelessWidget {
       width: double.infinity,
       height: 180,
       color: AppColors.accentGreen.withOpacity(0.2),
-      child: const Center(child: Icon(Icons.restaurant, size: 40, color: AppColors.accentGreen)),
+      child: const Center(
+        child: Icon(Icons.restaurant, size: 40, color: AppColors.accentGreen),
+      ),
     );
   }
 

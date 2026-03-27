@@ -12,14 +12,12 @@ class BrowserRepository {
   BrowserRepository(this._isar, this._client);
 
   Future<List<Recipe>> getRecipes() async {
-    // Check Isar first
     final isarRecipes = await _isar.isarRecipes.where().findAll();
-    
+
     if (isarRecipes.isEmpty) {
-      // Fallback: Fetch from Supabase and sync
       final response = await _client.from('recipes').select();
       final rows = response as List;
-      
+
       await _isar.writeTxn(() async {
         for (final row in rows) {
           final recipe = IsarRecipe()
@@ -31,7 +29,9 @@ class BrowserRepository {
             ..difficultyLevel = row['difficulty_level'] as String?
             ..durationMinutes = row['duration_minutes'] as int?
             ..youtubeUrl = row['youtube_url'] as String?
-            ..tags = (row['tags'] as List<dynamic>?)?.map((e) => e as String).toList()
+            ..tags = (row['tags'] as List<dynamic>?)
+                ?.map((e) => e as String)
+                .toList()
             ..category = row['category'] as String?
             ..area = row['area'] as String?
             ..sourceUrl = row['source_url'] as String?;
@@ -39,7 +39,6 @@ class BrowserRepository {
         }
       });
 
-      // Fetch again after sync
       final updatedIsarRecipes = await _isar.isarRecipes.where().findAll();
       return updatedIsarRecipes.map(_mapIsarRecipe).toList();
     }

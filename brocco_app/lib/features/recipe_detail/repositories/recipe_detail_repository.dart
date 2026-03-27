@@ -10,10 +10,9 @@ class RecipeDetailRepository {
 
   RecipeDetailRepository(this._client);
 
-  /// Fetches a recipe and its ingredients from Supabase,
-  /// maps DTOs to clean App Models, and returns them.
   Future<({Recipe recipe, List<Ingredient> ingredients})> getRecipeDetail(
-      String recipeId) async {
+    String recipeId,
+  ) async {
     final recipeResponse = await _client
         .from('recipes')
         .select()

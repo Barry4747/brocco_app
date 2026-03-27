@@ -5,16 +5,18 @@ import 'package:brocco_app/features/home/views/main_screen.dart';
 import 'package:brocco_app/features/roadmap/views/roadmap_screen.dart';
 import 'package:brocco_app/features/recipe_detail/views/recipe_detail_screen.dart';
 import 'package:brocco_app/features/game/views/level_completed_screen.dart';
+import 'package:brocco_app/features/game/views/game_screen.dart';
 import 'package:brocco_app/features/profile/views/profile_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_biometric_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_goals_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_skill_screen.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_tastes_screen.dart';
-import 'package:brocco_app/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:brocco_app/features/settings/views/settings_screen.dart';
 import 'package:brocco_app/features/browser/views/browser_screen.dart';
+import 'package:brocco_app/shared/widgets/nav_shell.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:brocco_app/features/auth/viewmodels/auth_viewmodel.dart';
 
 class RouterNotifier extends ChangeNotifier {
   final Ref ref;
@@ -35,10 +37,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
       ),
-      GoRoute(
-        path: '/auth',
-        builder: (context, state) => const AuthScreen(),
-      ),
+      GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
       GoRoute(
         path: '/onboarding/step_1',
         builder: (context, state) => const OnboardingSkillScreen(),
@@ -56,22 +55,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const OnboardingBiometricsScreen(),
       ),
       GoRoute(
-        path: '/',
-        builder: (context, state) => const MainScreen(),
-      ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
-      ),
-      GoRoute(
-        path: '/browser',
-        builder: (context, state) => const BrowserScreen(),
-      ),
-      GoRoute(
         path: '/roadmap/:categoryId',
         builder: (context, state) {
           final categoryId = state.pathParameters['categoryId']!;
@@ -85,7 +68,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           final nodeId = state.uri.queryParameters['nodeId'];
           final categoryId = state.uri.queryParameters['categoryId'];
           final recipeTitle = state.uri.queryParameters['recipeTitle'];
-          
+
           return RecipeDetailScreen(
             recipeId: recipeId,
             nodeId: nodeId,
@@ -100,13 +83,79 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           final nodeId = state.uri.queryParameters['nodeId']!;
           final categoryId = state.uri.queryParameters['categoryId']!;
           final recipeTitle = state.uri.queryParameters['recipeTitle'] ?? '';
-          
+
           return LevelCompletedScreen(
             nodeId: nodeId,
             categoryId: categoryId,
             recipeTitle: recipeTitle,
           );
         },
+      ),
+      GoRoute(
+        path: '/game/play',
+        builder: (context, state) {
+          final recipeId = state.uri.queryParameters['recipeId'] ?? '';
+          final recipeText = state.uri.queryParameters['recipeText'] ?? '';
+          final nodeId = state.uri.queryParameters['nodeId'] ?? '';
+          final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+          final recipeTitle = state.uri.queryParameters['recipeTitle'] ?? '';
+
+          return GameScreen(
+            recipeId: recipeId,
+            recipeText: recipeText,
+            nodeId: nodeId,
+            categoryId: categoryId,
+            recipeTitle: recipeTitle,
+          );
+        },
+      ),
+
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return NavShell(
+            navigationShell: navigationShell,
+            children: const [
+              ProfileScreen(),
+              MainScreen(),
+              BrowserScreen(),
+              SettingsScreen(),
+            ],
+          );
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) => const MainScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/browser',
+                builder: (context, state) => const BrowserScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (context, state) => const SettingsScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
 
@@ -119,36 +168,32 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isOnOnboarding = location.startsWith('/onboarding');
 
       if (authAsync.isLoading || !authAsync.hasValue) {
-         if (isOnSplash) return null;
-         return '/splash';
+        if (isOnSplash) return null;
+        return '/splash';
       }
 
       final authValue = authAsync.value!;
 
-      // Niezalogowany
       if (authValue.status != AuthStatus.authenticated) {
         if (!isOnAuth) return '/auth';
-        return null; // Zostaje w auth
+        return null;
       }
 
-      // Zalogowany, ale dopiero odpytujemy bazę o profil - zostaje na splash (albo redirect na splash)
       if (authValue.hasProfile == null) {
         if (!isOnSplash) return '/splash';
         return null;
       }
 
-      // Zalogowany BEZ profilu (Onboarding w toku)
       if (authValue.hasProfile == false) {
         if (!isOnOnboarding) {
           return '/onboarding/step_1';
         }
-        return null; // Zostaje na ekranie onboardingu w wybranym kroku
+        return null;
       }
 
-      // Zalogowany Z PROFILEM (Onboarding skończony)
       if (authValue.hasProfile == true) {
         if (isOnSplash || isOnAuth || isOnOnboarding) return '/';
-        return null; // Wolnoć Tomku w swoim domku
+        return null;
       }
 
       return null;
