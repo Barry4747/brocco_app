@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/widgets/buttons/main_back_button.dart';
 import '../viewmodels/browser_viewmodel.dart';
 import '../widgets/recipe_browser_card.dart';
 
@@ -24,8 +22,6 @@ class BrowserScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(24.0),
               child: Row(
                 children: [
-                  MainBackButton(onPressed: () => context.pop()),
-                  const SizedBox(width: 12),
                   const Text(
                     'Odkrywaj przepisy',
                     style: TextStyle(
@@ -103,7 +99,7 @@ class BrowserScreen extends ConsumerWidget {
                           ),
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 110),
                           itemCount: browserState.filteredRecipes.length,
                           itemBuilder: (context, index) {
                             final recipe = browserState.filteredRecipes[index];

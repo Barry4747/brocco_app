@@ -10,12 +10,13 @@ import 'package:brocco_app/features/profile/views/profile_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_biometric_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_goals_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_skill_screen.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_tastes_screen.dart';
-import 'package:brocco_app/features/auth/viewmodels/auth_viewmodel.dart';
 import 'package:brocco_app/features/settings/views/settings_screen.dart';
 import 'package:brocco_app/features/browser/views/browser_screen.dart';
+import 'package:brocco_app/shared/widgets/nav_shell.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:brocco_app/features/auth/viewmodels/auth_viewmodel.dart';
 
 class RouterNotifier extends ChangeNotifier {
   final Ref ref;
@@ -32,6 +33,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: notifier,
 
     routes: [
+      // ── Screens outside the nav shell ──────────────────────────────────────
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
@@ -57,22 +59,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const OnboardingBiometricsScreen(),
       ),
       GoRoute(
-        path: '/',
-        builder: (context, state) => const MainScreen(),
-      ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
-      ),
-      GoRoute(
-        path: '/browser',
-        builder: (context, state) => const BrowserScreen(),
-      ),
-      GoRoute(
         path: '/roadmap/:categoryId',
         builder: (context, state) {
           final categoryId = state.pathParameters['categoryId']!;
@@ -86,7 +72,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           final nodeId = state.uri.queryParameters['nodeId'];
           final categoryId = state.uri.queryParameters['categoryId'];
           final recipeTitle = state.uri.queryParameters['recipeTitle'];
-          
+
           return RecipeDetailScreen(
             recipeId: recipeId,
             nodeId: nodeId,
@@ -101,7 +87,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           final nodeId = state.uri.queryParameters['nodeId']!;
           final categoryId = state.uri.queryParameters['categoryId']!;
           final recipeTitle = state.uri.queryParameters['recipeTitle'] ?? '';
-          
+
           return LevelCompletedScreen(
             nodeId: nodeId,
             categoryId: categoryId,
@@ -127,6 +113,50 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
+
+      // ── Nav shell (4 main tabs) ─────────────────────────────────────────────
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            NavShell(navigationShell: navigationShell),
+        branches: [
+          // Tab 0: Profil
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+          // Tab 1: Kuchnia (categories hub)
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) => const MainScreen(),
+              ),
+            ],
+          ),
+          // Tab 2: Przepisy (browser)
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/browser',
+                builder: (context, state) => const BrowserScreen(),
+              ),
+            ],
+          ),
+          // Tab 3: Ustawienia
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (context, state) => const SettingsScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
 
     redirect: (context, state) {
@@ -138,8 +168,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isOnOnboarding = location.startsWith('/onboarding');
 
       if (authAsync.isLoading || !authAsync.hasValue) {
-         if (isOnSplash) return null;
-         return '/splash';
+        if (isOnSplash) return null;
+        return '/splash';
       }
 
       final authValue = authAsync.value!;
@@ -147,10 +177,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // Niezalogowany
       if (authValue.status != AuthStatus.authenticated) {
         if (!isOnAuth) return '/auth';
-        return null; // Zostaje w auth
+        return null;
       }
 
-      // Zalogowany, ale dopiero odpytujemy bazę o profil - zostaje na splash (albo redirect na splash)
+      // Zalogowany, ale dopiero odpytujemy bazę o profil
       if (authValue.hasProfile == null) {
         if (!isOnSplash) return '/splash';
         return null;
@@ -161,13 +191,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         if (!isOnOnboarding) {
           return '/onboarding/step_1';
         }
-        return null; // Zostaje na ekranie onboardingu w wybranym kroku
+        return null;
       }
 
       // Zalogowany Z PROFILEM (Onboarding skończony)
       if (authValue.hasProfile == true) {
         if (isOnSplash || isOnAuth || isOnOnboarding) return '/';
-        return null; // Wolnoć Tomku w swoim domku
+        return null;
       }
 
       return null;

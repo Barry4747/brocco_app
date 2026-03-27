@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-
+import 'buttons/pushable_3d_button.dart';
 /// A countdown timer widget for a recipe step.
 ///
 /// [duration] — the initial countdown time.
@@ -89,20 +89,14 @@ class _StepTimerState extends State<StepTimer> {
   Widget build(BuildContext context) {
     final bool finished = _remaining == Duration.zero;
 
-    return Container(
+    return Pushable3DButton(
+      onPressed: finished ? null : _toggleTimer,
+      backgroundColor: Colors.white,
+      shadowColor: AppColors.accentGreen,
+      shadowOffset: 4.0,
+      borderRadius: BorderRadius.circular(100),
+      border: Border.all(color: AppColors.accentGreen, width: 2),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: AppColors.accentGreen, width: 2),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.accentGreen,
-            offset: Offset(-3, 3),
-            blurRadius: 0,
-          ),
-        ],
-      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -116,20 +110,17 @@ class _StepTimerState extends State<StepTimer> {
             ),
           ),
           const SizedBox(width: 8),
-          GestureDetector(
-            onTap: finished ? null : _toggleTimer,
-            child: Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: finished ? AppColors.greyText : AppColors.primaryOrange,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: finished ? AppColors.greyText : AppColors.primaryOrange,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+              color: Colors.white,
+              size: 20,
             ),
           ),
         ],

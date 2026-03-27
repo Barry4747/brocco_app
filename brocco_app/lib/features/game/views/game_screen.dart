@@ -86,7 +86,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  OnboardingBackButton(onTap: () => context.pop()),
+                  OnboardingBackButton(
+                    onTap: () {
+                      if (gameState.currentStepIndex > 0) {
+                        ref.read(gameViewModelProvider.notifier).previousStep();
+                      } else {
+                        context.pop();
+                      }
+                    },
+                  ),
                   if (stepDuration != null)
                     StepTimer(
                       key: ValueKey(gameState.currentStepIndex),

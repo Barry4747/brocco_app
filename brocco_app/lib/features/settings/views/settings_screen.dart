@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/widgets/buttons/main_back_button.dart';
 import '../../auth/viewmodels/auth_viewmodel.dart';
 import '../viewmodels/settings_viewmodel.dart';
 
@@ -24,8 +22,6 @@ class SettingsScreen extends ConsumerWidget {
               // Header
               Row(
                 children: [
-                  MainBackButton(onPressed: () => context.pop()),
-                  const SizedBox(width: 16),
                   const Text(
                     'Ustawienia Kuchni',
                     style: TextStyle(
@@ -180,7 +176,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 110),
             ],
           ),
         ),
