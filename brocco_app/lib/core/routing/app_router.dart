@@ -5,6 +5,7 @@ import 'package:brocco_app/features/home/views/main_screen.dart';
 import 'package:brocco_app/features/roadmap/views/roadmap_screen.dart';
 import 'package:brocco_app/features/recipe_detail/views/recipe_detail_screen.dart';
 import 'package:brocco_app/features/game/views/level_completed_screen.dart';
+import 'package:brocco_app/features/game/views/game_screen.dart';
 import 'package:brocco_app/features/profile/views/profile_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_biometric_screen.dart';
 import 'package:brocco_app/features/onboarding/views/onboarding_goals_screen.dart';
@@ -92,6 +93,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           final recipeTitle = state.uri.queryParameters['recipeTitle'] ?? '';
           
           return LevelCompletedScreen(
+            nodeId: nodeId,
+            categoryId: categoryId,
+            recipeTitle: recipeTitle,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/game/play',
+        builder: (context, state) {
+          final recipeId = state.uri.queryParameters['recipeId'] ?? '';
+          final recipeText = state.uri.queryParameters['recipeText'] ?? '';
+          final nodeId = state.uri.queryParameters['nodeId'] ?? '';
+          final categoryId = state.uri.queryParameters['categoryId'] ?? '';
+          final recipeTitle = state.uri.queryParameters['recipeTitle'] ?? '';
+
+          return GameScreen(
+            recipeId: recipeId,
+            recipeText: recipeText,
             nodeId: nodeId,
             categoryId: categoryId,
             recipeTitle: recipeTitle,

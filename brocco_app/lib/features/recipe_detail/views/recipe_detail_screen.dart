@@ -40,15 +40,20 @@ class RecipeDetailScreen extends ConsumerWidget {
           child: CircularProgressIndicator(color: AppColors.primaryOrange),
         ),
         error: (err, _) => Center(
-          child: Text('Błąd: $err',
-              style: const TextStyle(color: Colors.redAccent)),
+          child: Text(
+            'Błąd: $err',
+            style: const TextStyle(color: Colors.redAccent),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildContent(
-      BuildContext context, WidgetRef ref, RecipeDetailState state) {
+    BuildContext context,
+    WidgetRef ref,
+    RecipeDetailState state,
+  ) {
     final recipe = state.recipe;
     final selectedTab = ref.watch(_selectedTabProvider);
 
@@ -98,7 +103,12 @@ class RecipeDetailScreen extends ConsumerWidget {
             onPressed: () {
               if (nodeId != null && categoryId != null) {
                 final encodedTitle = Uri.encodeComponent(recipeTitle ?? '');
-                context.replace('/game/completed?nodeId=$nodeId&categoryId=$categoryId&recipeTitle=$encodedTitle');
+                final encodedRecipeText = Uri.encodeComponent(
+                  recipe.recipePlaintext ?? '',
+                );
+                context.replace(
+                  '/game/play?recipeId=$recipeId&recipeText=$encodedRecipeText&nodeId=$nodeId&categoryId=$categoryId&recipeTitle=$encodedTitle',
+                );
               }
             },
           ),
@@ -128,9 +138,7 @@ class RecipeDetailScreen extends ConsumerWidget {
         Positioned(
           top: MediaQuery.of(context).padding.top + 8,
           left: 16,
-          child: MainBackButton(
-            onPressed: () => context.pop(),
-          ),
+          child: MainBackButton(onPressed: () => context.pop()),
         ),
       ],
     );
@@ -141,9 +149,7 @@ class RecipeDetailScreen extends ConsumerWidget {
       width: double.infinity,
       height: 260,
       color: AppColors.accentGreen.withValues(alpha: 0.2),
-      child: const Center(
-        child: Text('🍽️', style: TextStyle(fontSize: 64)),
-      ),
+      child: const Center(child: Text('🍽️', style: TextStyle(fontSize: 64))),
     );
   }
 
@@ -183,8 +189,9 @@ class RecipeDetailScreen extends ConsumerWidget {
                           ? AppColors.primaryText
                           : AppColors.greyText,
                       fontSize: 15,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
                     ),
                   ),
                 ),
