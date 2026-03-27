@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/buttons/main_progress_bar.dart';
-import '../../../shared/widgets/buttons/primary_button.dart';
+import '../../../shared/widgets/buttons/pushable_3d_button.dart';
 import '../models/category.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -29,7 +29,7 @@ class CategoryCard extends StatelessWidget {
     if (isLocked) {
       return _buildLockedCard();
     }
-      return _buildUnlockedCard();
+    return _buildUnlockedCard();
   }
 
   Widget _buildUnlockedCard() {
@@ -39,16 +39,28 @@ class CategoryCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 24),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: AppColors.accentGreen, width: 1.5),
-          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.accentGreen, width: 2.0),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.accentGreen,
+              offset: Offset(0, 5),
+              blurRadius: 0,
+            ),
+          ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            Container(
               width: double.infinity,
               height: 160,
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: AppColors.accentGreen, width: 2.0),
+                ),
+              ),
               child: category.imageUrl != null
                   ? Image.network(
                       category.imageUrl!,
@@ -58,7 +70,7 @@ class CategoryCard extends StatelessWidget {
                   : _imagePlaceholder(),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+              padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -75,12 +87,13 @@ class CategoryCard extends StatelessWidget {
                     currentStep: completedMeals,
                     totalSteps: totalMeals,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 12),
                   Text(
                     '$completedMeals/$totalMeals Ukończonych potraw',
                     style: const TextStyle(
                       color: AppColors.greyText,
-                      fontSize: 13,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -99,7 +112,16 @@ class CategoryCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 24),
       height: 220,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.white, // White background for the card overall
+        border: Border.all(color: AppColors.accentGreen, width: 2.0),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.accentGreen,
+            offset: Offset(0, 5),
+            blurRadius: 0,
+          ),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -142,7 +164,7 @@ class CategoryCard extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.lock_rounded,
-                    color: Colors.white,
+                    color: Color.fromARGB(188, 255, 255, 255),
                     size: 24,
                   ),
                 ),
@@ -158,9 +180,34 @@ class CategoryCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 48),
-                  child: PrimaryButton(
-                    text: 'Odblokuj za ${category.unlockCostStars} ⭐',
+                  child: Pushable3DButton(
                     onPressed: _canAfford ? onTap : null,
+                    backgroundColor: AppColors.primaryOrange,
+                    shadowColor: AppColors.darkOrange,
+                    shadowOffset: 4.0,
+                    borderRadius: BorderRadius.circular(16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Odblokuj za ${category.unlockCostStars}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -174,9 +221,7 @@ class CategoryCard extends StatelessWidget {
   Widget _imagePlaceholder() {
     return Container(
       color: AppColors.accentGreen.withValues(alpha: 0.3),
-      child: const Center(
-        child: Text('🍽️', style: TextStyle(fontSize: 48)),
-      ),
+      child: const Center(child: Text('🍽️', style: TextStyle(fontSize: 48))),
     );
   }
 }

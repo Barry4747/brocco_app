@@ -5,6 +5,7 @@ class AppColors {
   static const Color primaryText = Color(0xFF0F4A3F);
   static const Color accentGreen = Color(0xFFA1E3C8);
   static const Color primaryOrange = Color(0xFFF39C12);
+  static const Color darkOrange = Color(0xFFD87800);
   static const Color greyText = Color(0xFF8BA59C);
   static const Color errorRed = Color(0xFFE74C3C);
   static const Color errorBackground = Color(0xFFFDE8E6);

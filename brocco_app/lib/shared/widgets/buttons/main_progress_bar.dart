@@ -43,7 +43,11 @@ class MainProgressBar extends StatelessWidget {
         const SizedBox(width: 16),
         Text(
           '$currentStep/$totalSteps',
-          style: const TextStyle(color: AppColors.greyText, fontWeight: FontWeight.bold, fontSize: 14),
+          style: const TextStyle(
+            color: AppColors.greyText,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
         ),
       ],
     );
