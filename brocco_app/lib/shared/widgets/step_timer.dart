@@ -2,19 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import 'buttons/pushable_3d_button.dart';
-/// A countdown timer widget for a recipe step.
-///
-/// [duration] — the initial countdown time.
-/// [onTimeEnd] — optional callback invoked when the timer reaches zero.
+
 class StepTimer extends StatefulWidget {
   final Duration duration;
   final VoidCallback? onTimeEnd;
 
-  const StepTimer({
-    super.key,
-    required this.duration,
-    this.onTimeEnd,
-  });
+  const StepTimer({super.key, required this.duration, this.onTimeEnd});
 
   @override
   State<StepTimer> createState() => _StepTimerState();

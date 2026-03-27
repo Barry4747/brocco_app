@@ -116,8 +116,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       // ── Nav shell (4 main tabs) ─────────────────────────────────────────────
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            NavShell(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) {
+          return NavShell(
+            navigationShell: navigationShell,
+            children: const [
+              ProfileScreen(),
+              MainScreen(),
+              BrowserScreen(),
+              SettingsScreen(),
+            ],
+          );
+        },
         branches: [
           // Tab 0: Profil
           StatefulShellBranch(

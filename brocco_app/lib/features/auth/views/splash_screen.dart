@@ -22,10 +22,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _scaleAnim = Tween<double>(begin: 0.6, end: 1.0).animate(
-      CurvedAnimation(parent: _animCtrl, curve: Curves.elasticOut),
-    );
-    _fadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _scaleAnim = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animCtrl, curve: Curves.elasticOut));
+    _fadeAnim = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(
         parent: _animCtrl,
         curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
@@ -43,59 +44,140 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryText,
-      body: Center(
-        child: AnimatedBuilder(
-          animation: _animCtrl,
-          builder: (context, child) {
-            return FadeTransition(
-              opacity: _fadeAnim,
-              child: ScaleTransition(
-                scale: _scaleAnim,
-                child: child,
-              ),
-            );
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: AppColors.accentGreen.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(36),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: AnimatedBuilder(
+            animation: _animCtrl,
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _fadeAnim,
+                child: ScaleTransition(scale: _scaleAnim, child: child),
+              );
+            },
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                const SizedBox(height: 20),
+                // Logo Top
+                Image.asset(
+                  'assets/images/brocco_logo_text.png',
+                  width: 220,
+                  alignment: Alignment.center,
                 ),
-                child: const Center(
-                  child: Text(
-                    '🥦',
-                    style: TextStyle(fontSize: 64),
+
+                const Spacer(flex: 1),
+
+                // Mascot + Floating Icons
+                SizedBox(
+                  height: 320,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Mascot
+                      Image.asset(
+                        'assets/images/mascot_cheerful.png',
+                        height: 280,
+                      ),
+
+                      // Floating Icon: Star (Top Left)
+                      Positioned(
+                        left: 20,
+                        top: 20,
+                        child: _FloatingIcon(
+                          icon: Icons.star_rounded,
+                          color: AppColors.primaryOrange,
+                        ),
+                      ),
+
+                      // Floating Icon: Stopwatch (Top Right)
+                      Positioned(
+                        right: 30,
+                        top: 40,
+                        child: _FloatingIcon(
+                          icon: Icons.timer_outlined,
+                          color: AppColors.primaryText,
+                        ),
+                      ),
+
+                      // Floating Icon: Fire (Bottom Right)
+                      Positioned(
+                        right: 15,
+                        bottom: 40,
+                        child: _FloatingIcon(
+                          icon: Icons.local_fire_department_rounded,
+                          color: AppColors.primaryOrange,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Brocco',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 44,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -1.5,
+
+                const Spacer(flex: 1),
+
+                // Text Content
+                const Text(
+                  'Podkręć swoje\ngotowanie',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.primaryText,
+                    fontSize: 32,
+                    height: 1.2,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Twój asystent w kuchni',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.55),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
+                const SizedBox(height: 16),
+                const Text(
+                  'Zmień codzienne posiłki w misje,\nzdobywaj nagrody i opanuj swoją kuchnię',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.greyText,
+                    fontSize: 16,
+                    height: 1.5,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 60),
+              ],
+            ),
+          ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FloatingIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+
+  const _FloatingIcon({required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.accentGreen.withOpacity(0.5),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accentGreen.withOpacity(0.3),
+            offset: const Offset(0, 4),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: Icon(icon, color: color, size: 24),
     );
   }
 }

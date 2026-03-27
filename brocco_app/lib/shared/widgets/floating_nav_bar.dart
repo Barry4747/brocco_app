@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 
 class FloatingNavBar extends StatelessWidget {
-  const FloatingNavBar({super.key});
+  final StatefulNavigationShell navigationShell;
+
+  const FloatingNavBar({super.key, required this.navigationShell});
 
   static const _items = [
     _NavItem(label: 'Profil', icon: Icons.person_outline_rounded, route: '/profile'),
@@ -12,18 +14,9 @@ class FloatingNavBar extends StatelessWidget {
     _NavItem(label: 'Ustawienia', icon: Icons.settings_outlined, route: '/settings'),
   ];
 
-  static int _indexForLocation(String location) {
-    if (location.startsWith('/profile')) return 0;
-    if (location == '/') return 1;
-    if (location.startsWith('/browser')) return 2;
-    if (location.startsWith('/settings')) return 3;
-    return 1;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    final selectedIndex = _indexForLocation(location);
+    final selectedIndex = navigationShell.currentIndex;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
@@ -49,7 +42,7 @@ class FloatingNavBar extends StatelessWidget {
             return Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: () => context.go(item.route),
+                onTap: () => navigationShell.goBranch(i),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut,
