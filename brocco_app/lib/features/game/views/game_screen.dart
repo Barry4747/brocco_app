@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/buttons/main_back_text_button.dart';
 import '../../../shared/widgets/buttons/main_progress_bar.dart';
 import '../../../shared/widgets/buttons/primary_button.dart';
+import '../../../shared/widgets/step_timer.dart';
+import '../utils/step_time_parser.dart';
 import '../viewmodels/game_viewmodel.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -31,10 +34,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(gameViewModelProvider.notifier).startGame(
-            widget.recipeId,
-            widget.recipeText,
-          );
+      ref
+          .read(gameViewModelProvider.notifier)
+          .startGame(widget.recipeId, widget.recipeText);
     });
   }
 
@@ -54,93 +56,161 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final gameState = ref.watch(gameViewModelProvider);
+    final stepText = gameState.currentStepText;
+    final stepDuration = stepText != null ? parseStepDuration(stepText) : null;
+    final stepNumber = gameState.currentStepIndex + 1;
+    final totalSteps = gameState.steps.length;
+    final isLastStep =
+        gameState.steps.isNotEmpty &&
+        gameState.currentStepIndex >= gameState.steps.length - 1;
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(widget.recipeTitle, style: const TextStyle(color: AppColors.primaryText, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: AppColors.primaryText),
-          onPressed: () => context.pop(),
-        ),
-      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            children: [
-              MainProgressBar(
-                currentStep: gameState.steps.isEmpty ? 0 : gameState.currentStepIndex + 1,
-                totalSteps: gameState.steps.length,
+        child: Column(
+          children: [
+            // ── Top bar: Progress ─────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: MainProgressBar(
+                currentStep: gameState.steps.isEmpty ? 0 : stepNumber,
+                totalSteps: totalSteps,
               ),
-              const SizedBox(height: 48),
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Text(
-                      gameState.currentStepText ?? 'Przetwarzanie przepisu...',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.primaryText,
-                        height: 1.4,
-                      ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // ── Back button row + Timer ───────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  OnboardingBackButton(onTap: () => context.pop()),
+                  if (stepDuration != null)
+                    StepTimer(
+                      key: ValueKey(gameState.currentStepIndex),
+                      duration: stepDuration,
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // ── Broccoli sprite + Step card ───────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Broccoli placeholder
+                  Container(
+                    width: 90,
+                    height: 90,
+                    decoration: BoxDecoration(
+                      color: AppColors.accentGreen.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text('X', style: TextStyle(fontSize: 48)),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  if (gameState.currentStepIndex > 0)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          ref.read(gameViewModelProvider.notifier).previousStep();
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: const BorderSide(color: AppColors.accentGreen, width: 2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: const Text(
-                          'Poprzedni',
-                          style: TextStyle(
-                            color: AppColors.accentGreen,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (gameState.currentStepIndex > 0) const SizedBox(width: 16),
+                  const SizedBox(width: 12),
+                  // Step card
                   Expanded(
-                    child: PrimaryButton(
-                      text: (gameState.steps.isNotEmpty &&
-                                  gameState.currentStepIndex >= gameState.steps.length - 1)
-                          ? 'Zakończ'
-                          : 'Następny',
-                      onPressed: () {
-                        if (gameState.steps.isNotEmpty &&
-                            gameState.currentStepIndex >= gameState.steps.length - 1) {
-                          _finishGame();
-                        } else {
-                          ref.read(gameViewModelProvider.notifier).nextStep();
-                        }
-                      },
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.accentGreen.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Krok $stepNumber:',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.primaryOrange,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            stepText ?? 'Przetwarzanie przepisu...',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryText,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Ingredients area placeholder ──────────────────────────────────
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'SKŁADNIKI DO DODANIA:',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.2,
+                        color: AppColors.greyText,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Empty placeholder for future ingredient logic
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // ── Bottom action button ──────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: PrimaryButton(
+                text: isLastStep ? 'Zakończ' : 'Gotowe! Następny Krok',
+                onPressed: () {
+                  if (isLastStep) {
+                    _finishGame();
+                  } else {
+                    ref.read(gameViewModelProvider.notifier).nextStep();
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
