@@ -20,7 +20,10 @@ class MasterpieceGallery extends ConsumerWidget {
             child: Center(
               child: Padding(
                 padding: EdgeInsets.all(32.0),
-                child: Text('Brak ukończonych przepisów', style: TextStyle(color: AppColors.greyText)),
+                child: Text(
+                  'Brak ukończonych przepisów',
+                  style: TextStyle(color: AppColors.greyText),
+                ),
               ),
             ),
           );
@@ -33,61 +36,68 @@ class MasterpieceGallery extends ConsumerWidget {
             crossAxisSpacing: 16,
             childAspectRatio: 0.85,
           ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final node = nodes[index];
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: GestureDetector(
-                  onTap: () {
-                    if (!node.hasUserPhoto) {
-                      _pickAndUpload(context, ref, node.id);
-                    }
-                  },
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      _buildImage(node),
-                      if (!node.hasUserPhoto)
-                        Container(
-                          color: AppColors.background.withValues(alpha: 0.6),
-                          child: const Center(
-                            child: Icon(Icons.add_a_photo_outlined, size: 40, color: AppColors.primaryOrange),
-                          ),
-                        ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final node = nodes[index];
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: GestureDetector(
+                onTap: () {
+                  if (!node.hasUserPhoto) {
+                    _pickAndUpload(context, ref, node.id);
+                  }
+                },
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    _buildImage(node),
+                    if (!node.hasUserPhoto)
                       Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
+                        color: AppColors.background.withValues(alpha: 0.6),
+                        child: const Center(
+                          child: Icon(
+                            Icons.add_a_photo_outlined,
+                            size: 40,
+                            color: AppColors.primaryOrange,
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 12,
-                        left: 12,
-                        right: 12,
-                        child: Text(
-                          node.title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withValues(alpha: 0.7),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Positioned(
+                      bottom: 12,
+                      left: 12,
+                      right: 12,
+                      child: Text(
+                        node.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
-            childCount: nodes.length,
-          ),
+              ),
+            );
+          }, childCount: nodes.length),
         );
       },
-      loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
-      error: (e, _) => SliverToBoxAdapter(child: Center(child: Text('Błąd: $e'))),
+      loading: () => const SliverToBoxAdapter(
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, _) =>
+          SliverToBoxAdapter(child: Center(child: Text('Błąd: $e'))),
     );
   }
 
@@ -95,10 +105,14 @@ class MasterpieceGallery extends ConsumerWidget {
     if (node.imageUrl == null || node.imageUrl!.isEmpty) {
       return Container(
         color: AppColors.accentGreen.withValues(alpha: 0.2),
-        child: const Icon(Icons.restaurant, size: 48, color: AppColors.accentGreen),
+        child: const Icon(
+          Icons.restaurant,
+          size: 48,
+          color: AppColors.accentGreen,
+        ),
       );
     }
-    
+
     final imageWidget = Image.network(
       node.imageUrl!,
       fit: BoxFit.cover,
@@ -117,37 +131,61 @@ class MasterpieceGallery extends ConsumerWidget {
     return imageWidget;
   }
 
-  Future<void> _pickAndUpload(BuildContext context, WidgetRef ref, String nodeId) async {
-    // We can directly open bottom sheet or just camera. The user usually prefers a choice.
-    // Since it's a small shortcut, we can use the same logic as level_completed.
+  Future<void> _pickAndUpload(
+    BuildContext context,
+    WidgetRef ref,
+    String nodeId,
+  ) async {
     final ImagePicker picker = ImagePicker();
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (BuildContext ctx) {
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.primaryOrange),
-                title: const Text('Zrób zdjęcie (+50 PD)', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(
+                  Icons.camera_alt,
+                  color: AppColors.primaryOrange,
+                ),
+                title: const Text(
+                  'Zrób zdjęcie (+50 PD)',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 onTap: () async {
                   Navigator.pop(ctx);
-                  final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+                  final XFile? photo = await picker.pickImage(
+                    source: ImageSource.camera,
+                  );
                   if (photo != null) {
-                    ref.read(profileActionProvider.notifier).uploadMissingPhoto(nodeId, File(photo.path));
+                    ref
+                        .read(profileActionProvider.notifier)
+                        .uploadMissingPhoto(nodeId, File(photo.path));
                   }
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.primaryOrange),
-                title: const Text('Wybierz z galerii (+50 PD)', style: TextStyle(fontWeight: FontWeight.w600)),
+                leading: const Icon(
+                  Icons.photo_library,
+                  color: AppColors.primaryOrange,
+                ),
+                title: const Text(
+                  'Wybierz z galerii (+50 PD)',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
                 onTap: () async {
                   Navigator.pop(ctx);
-                  final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                  final XFile? image = await picker.pickImage(
+                    source: ImageSource.gallery,
+                  );
                   if (image != null) {
-                    ref.read(profileActionProvider.notifier).uploadMissingPhoto(nodeId, File(image.path));
+                    ref
+                        .read(profileActionProvider.notifier)
+                        .uploadMissingPhoto(nodeId, File(image.path));
                   }
                 },
               ),

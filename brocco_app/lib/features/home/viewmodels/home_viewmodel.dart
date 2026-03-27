@@ -10,11 +10,9 @@ class HomeViewModel extends AsyncNotifier<HomeData> {
     final repository = ref.read(homeRepositoryProvider);
     final userId = ref.watch(userIdProvider);
 
-    // Load fast from local cache first
     final localState = await repository.getHomeDataFromLocal(userId);
     state = AsyncValue.data(localState);
 
-    // Sync in background and update State
     if (userId != null) {
       _syncInBackground(repository, userId);
     }
@@ -22,7 +20,10 @@ class HomeViewModel extends AsyncNotifier<HomeData> {
     return localState;
   }
 
-  Future<void> _syncInBackground(HomeRepository repository, String userId) async {
+  Future<void> _syncInBackground(
+    HomeRepository repository,
+    String userId,
+  ) async {
     try {
       final updatedState = await repository.syncAndGetHomeData(userId);
       state = AsyncValue.data(updatedState);
@@ -39,7 +40,6 @@ class HomeViewModel extends AsyncNotifier<HomeData> {
     final userId = Supabase.instance.client.auth.currentUser?.id;
     if (userId == null) return;
 
-    // Optimistically update the UI state
     state = AsyncValue.data(
       current.copyWith(
         currentStars: current.currentStars - cat.unlockCostStars,
@@ -47,7 +47,6 @@ class HomeViewModel extends AsyncNotifier<HomeData> {
       ),
     );
 
-    // Perform actual unlock via repository
     final repository = ref.read(homeRepositoryProvider);
     await repository.unlockCategory(
       userId: userId,

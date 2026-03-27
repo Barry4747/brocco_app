@@ -66,12 +66,19 @@ class BrowserViewModel extends StateNotifier<BrowserState> {
   void _applyFilters() {
     var filtered = state.allRecipes;
 
-    // Search
     if (state.searchQuery.isNotEmpty) {
-      filtered = filtered.where((r) =>
-          r.title.toLowerCase().contains(state.searchQuery.toLowerCase()) ||
-          (r.description?.toLowerCase().contains(state.searchQuery.toLowerCase()) ?? false)
-      ).toList();
+      filtered = filtered
+          .where(
+            (r) =>
+                r.title.toLowerCase().contains(
+                  state.searchQuery.toLowerCase(),
+                ) ||
+                (r.description?.toLowerCase().contains(
+                      state.searchQuery.toLowerCase(),
+                    ) ??
+                    false),
+          )
+          .toList();
     }
 
     state = state.copyWith(filteredRecipes: filtered);
@@ -80,6 +87,6 @@ class BrowserViewModel extends StateNotifier<BrowserState> {
 
 final browserViewModelProvider =
     StateNotifierProvider<BrowserViewModel, BrowserState>((ref) {
-  final repository = ref.watch(browserRepositoryProvider);
-  return BrowserViewModel(repository);
-});
+      final repository = ref.watch(browserRepositoryProvider);
+      return BrowserViewModel(repository);
+    });

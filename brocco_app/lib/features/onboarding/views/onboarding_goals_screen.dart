@@ -23,14 +23,12 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
     return OnboardingScreenShell(
       currentStep: 3,
       totalSteps: 4,
-      scrollable: true, // Włączone przewijanie dla 5 kart!
+      scrollable: true,
       onBack: () => context.pop(),
       primaryButtonText: 'Kontynuuj',
       onPrimaryPressed: _selectedGoal == null
           ? null
           : () {
-              // Aktualizujemy TYLKO mainGoal. Resztę biometrii dodamy w kroku 4,
-              // metoda copyWith w modelu świetnie sobie z tym poradzi w tle.
               ref
                   .read(onboardingViewModelProvider.notifier)
                   .updateBiometrics(mainGoal: _selectedGoal);

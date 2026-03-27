@@ -12,7 +12,11 @@ class LevelCompletedViewModel extends AsyncNotifier<void> {
     return;
   }
 
-  Future<void> uploadMealPhoto(String nodeId, String categoryId, File photoFile) async {
+  Future<void> uploadMealPhoto(
+    String nodeId,
+    String categoryId,
+    File photoFile,
+  ) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final supabase = Supabase.instance.client;
@@ -20,13 +24,13 @@ class LevelCompletedViewModel extends AsyncNotifier<void> {
       if (userId == null) return;
 
       final profileRepository = ref.read(profileRepositoryProvider);
-      
+
       await profileRepository.uploadMealPhoto(
         userId: userId,
         nodeId: nodeId,
         photoFile: photoFile,
       );
-      
+
       ref.invalidate(roadmapViewModelProvider(categoryId));
       ref.invalidate(homeViewModelProvider);
     });
@@ -41,7 +45,7 @@ class LevelCompletedViewModel extends AsyncNotifier<void> {
       if (userId == null) return;
 
       final roadmapRepository = ref.read(roadmapRepositoryProvider);
-      
+
       await roadmapRepository.completeNode(
         userId: userId,
         nodeId: nodeId,
@@ -50,7 +54,6 @@ class LevelCompletedViewModel extends AsyncNotifier<void> {
         xpEarned: 150,
       );
 
-      // Invalidate UI providers to reflect changes
       ref.invalidate(roadmapViewModelProvider(categoryId));
       ref.invalidate(homeViewModelProvider);
     });
@@ -59,5 +62,5 @@ class LevelCompletedViewModel extends AsyncNotifier<void> {
 
 final levelCompletedViewModelProvider =
     AsyncNotifierProvider<LevelCompletedViewModel, void>(
-  () => LevelCompletedViewModel(),
-);
+      () => LevelCompletedViewModel(),
+    );

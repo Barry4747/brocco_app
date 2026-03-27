@@ -17,15 +17,15 @@ class SettingsRepository {
         .userIdEqualTo(userId)
         .watch(fireImmediately: true)
         .map((results) {
-      if (results.isEmpty) return null;
-      final isar = results.first;
-      return UserUxPreferences(
-        userId: isar.userId ?? '',
-        keepScreenOn: isar.keepScreenOn,
-        timerAlarms: isar.timerAlarms,
-        mascotSounds: isar.mascotSounds,
-      );
-    });
+          if (results.isEmpty) return null;
+          final isar = results.first;
+          return UserUxPreferences(
+            userId: isar.userId ?? '',
+            keepScreenOn: isar.keepScreenOn,
+            timerAlarms: isar.timerAlarms,
+            mascotSounds: isar.mascotSounds,
+          );
+        });
   }
 
   Future<void> updatePreference({
@@ -33,13 +33,11 @@ class SettingsRepository {
     required String key,
     required bool value,
   }) async {
-    // 1. Update Supabase
-    await _supabase.from('user_ux_preferences').update({
-      key: value,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('user_id', userId);
+    await _supabase
+        .from('user_ux_preferences')
+        .update({key: value, 'updated_at': DateTime.now().toIso8601String()})
+        .eq('user_id', userId);
 
-    // 2. Update Local Isar
     await _isar.writeTxn(() async {
       final isar = await _isar.isarUserUxPreferences
           .where()

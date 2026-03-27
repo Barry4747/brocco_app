@@ -19,7 +19,9 @@ class RoadmapRepository {
   RoadmapRepository(this._isar, this._syncService);
 
   Future<RoadmapData> getRoadmapDataFromLocal(
-      String? userId, String categoryId) async {
+    String? userId,
+    String categoryId,
+  ) async {
     final isarCat = await _isar.isarCategorys
         .where()
         .supabaseIdEqualTo(categoryId)
@@ -42,16 +44,18 @@ class RoadmapRepository {
 
     final nodes = isarNodes
         .where((n) => n.supabaseId != null)
-        .map((n) => RoadmapNode(
-              id: n.supabaseId!,
-              categoryId: n.categoryId ?? categoryId,
-              recipeId: n.recipeId,
-              title: n.title ?? '',
-              previewImageUrl: n.previewImageUrl,
-              mapColumn: n.mapColumn,
-              mapRow: n.mapRow,
-              prerequisiteIds: n.prerequisiteIds,
-            ))
+        .map(
+          (n) => RoadmapNode(
+            id: n.supabaseId!,
+            categoryId: n.categoryId ?? categoryId,
+            recipeId: n.recipeId,
+            title: n.title ?? '',
+            previewImageUrl: n.previewImageUrl,
+            mapColumn: n.mapColumn,
+            mapRow: n.mapRow,
+            prerequisiteIds: n.prerequisiteIds,
+          ),
+        )
         .toList();
 
     Set<String> completedIds = {};
@@ -86,7 +90,9 @@ class RoadmapRepository {
   }
 
   Future<RoadmapData> syncAndGetRoadmapData(
-      String userId, String categoryId) async {
+    String userId,
+    String categoryId,
+  ) async {
     await _syncService.syncRoadmapData(userId, categoryId);
     return getRoadmapDataFromLocal(userId, categoryId);
   }
@@ -100,16 +106,13 @@ class RoadmapRepository {
   }) async {
     final supabase = Supabase.instance.client;
 
-    // 1. Optimistic local update
     await _isar.writeTxn(() async {
-      // Insert IsarCompletedNode
       final completedNode = IsarCompletedNode()
         ..userId = userId
         ..nodeId = nodeId
         ..starsEarned = starsEarned;
       await _isar.isarCompletedNodes.put(completedNode);
 
-      // Update IsarProfile stats
       final profile = await _isar.isarProfiles
           .where()
           .supabaseUserIdEqualTo(userId)
@@ -121,7 +124,6 @@ class RoadmapRepository {
         await _isar.isarProfiles.put(profile);
       }
 
-      // Update category completedNodesCount locally
       var unlockedCat = await _isar.isarUnlockedCategorys
           .where()
           .userIdEqualToAnyCategoryId(userId)
@@ -142,7 +144,6 @@ class RoadmapRepository {
       }
     });
 
-    // 2. Supabase background update (non-blocking if possible, but here we await for safety)
     await supabase.from('user_completed_nodes').upsert({
       'user_id': userId,
       'node_id': nodeId,
@@ -155,10 +156,13 @@ class RoadmapRepository {
         .eq('id', userId)
         .single();
 
-    await supabase.from('profiles').update({
-      'stars_bank': (profileResponse['stars_bank'] as int) + starsEarned,
-      'total_xp': (profileResponse['total_xp'] as int) + xpEarned,
-    }).eq('id', userId);
+    await supabase
+        .from('profiles')
+        .update({
+          'stars_bank': (profileResponse['stars_bank'] as int) + starsEarned,
+          'total_xp': (profileResponse['total_xp'] as int) + xpEarned,
+        })
+        .eq('id', userId);
 
     final catResponse = await supabase
         .from('user_unlocked_categories')
@@ -168,10 +172,14 @@ class RoadmapRepository {
         .maybeSingle();
 
     if (catResponse != null) {
-      await supabase.from('user_unlocked_categories').update({
-        'completed_nodes_count':
-            (catResponse['completed_nodes_count'] as int) + 1,
-      }).eq('user_id', userId).eq('category_id', categoryId);
+      await supabase
+          .from('user_unlocked_categories')
+          .update({
+            'completed_nodes_count':
+                (catResponse['completed_nodes_count'] as int) + 1,
+          })
+          .eq('user_id', userId)
+          .eq('category_id', categoryId);
     } else {
       await supabase.from('user_unlocked_categories').insert({
         'user_id': userId,
@@ -182,9 +190,6 @@ class RoadmapRepository {
     }
   }
 }
-
-
-
 
 final roadmapRepositoryProvider = Provider<RoadmapRepository>((ref) {
   final isar = ref.watch(isarProvider);

@@ -62,89 +62,82 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                const SizedBox(height: 20),
-                // Logo Top
-                Image.asset(
-                  'assets/images/brocco_logo_text.png',
-                  width: 220,
-                  alignment: Alignment.center,
-                ),
-
-                const Spacer(flex: 1),
-
-                // Mascot + Floating Icons
-                SizedBox(
-                  height: 320,
-                  child: Stack(
+                  const SizedBox(height: 20),
+                  Image.asset(
+                    'assets/images/brocco_logo_text.png',
+                    width: 220,
                     alignment: Alignment.center,
-                    children: [
-                      // Mascot
-                      Image.asset(
-                        'assets/images/mascot_cheerful.png',
-                        height: 280,
-                      ),
-
-                      // Floating Icon: Star (Top Left)
-                      Positioned(
-                        left: 20,
-                        top: 20,
-                        child: _FloatingIcon(
-                          icon: Icons.star_rounded,
-                          color: AppColors.primaryOrange,
-                        ),
-                      ),
-
-                      // Floating Icon: Stopwatch (Top Right)
-                      Positioned(
-                        right: 30,
-                        top: 40,
-                        child: _FloatingIcon(
-                          icon: Icons.timer_outlined,
-                          color: AppColors.primaryText,
-                        ),
-                      ),
-
-                      // Floating Icon: Fire (Bottom Right)
-                      Positioned(
-                        right: 15,
-                        bottom: 40,
-                        child: _FloatingIcon(
-                          icon: Icons.local_fire_department_rounded,
-                          color: AppColors.primaryOrange,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
 
-                const Spacer(flex: 1),
+                  const Spacer(flex: 1),
 
-                // Text Content
-                const Text(
-                  'Podkręć swoje\ngotowanie',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.primaryText,
-                    fontSize: 32,
-                    height: 1.2,
-                    fontWeight: FontWeight.w900,
+                  SizedBox(
+                    height: 320,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/mascot_cheerful.png',
+                          height: 280,
+                        ),
+
+                        Positioned(
+                          left: 20,
+                          top: 20,
+                          child: _FloatingIcon(
+                            icon: Icons.star_rounded,
+                            color: AppColors.primaryOrange,
+                          ),
+                        ),
+
+                        Positioned(
+                          right: 30,
+                          top: 40,
+                          child: _FloatingIcon(
+                            icon: Icons.timer_outlined,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+
+                        Positioned(
+                          right: 15,
+                          bottom: 40,
+                          child: _FloatingIcon(
+                            icon: Icons.local_fire_department_rounded,
+                            color: AppColors.primaryOrange,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Zmień codzienne posiłki w misje,\nzdobywaj nagrody i opanuj swoją kuchnię',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.greyText,
-                    fontSize: 16,
-                    height: 1.5,
-                    fontWeight: FontWeight.w500,
+
+                  const Spacer(flex: 1),
+
+                  const Text(
+                    'Podkręć swoje\ngotowanie',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.primaryText,
+                      fontSize: 32,
+                      height: 1.2,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 60),
-              ],
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Zmień codzienne posiłki w misje,\nzdobywaj nagrody i opanuj swoją kuchnię',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.greyText,
+                      fontSize: 16,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 60),
+                ],
+              ),
             ),
-          ),
           ),
         ),
       ),

@@ -33,15 +33,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: notifier,
 
     routes: [
-      // ── Screens outside the nav shell ──────────────────────────────────────
       GoRoute(
         path: '/splash',
         builder: (context, state) => const SplashScreen(),
       ),
-      GoRoute(
-        path: '/auth',
-        builder: (context, state) => const AuthScreen(),
-      ),
+      GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
       GoRoute(
         path: '/onboarding/step_1',
         builder: (context, state) => const OnboardingSkillScreen(),
@@ -114,7 +110,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // ── Nav shell (4 main tabs) ─────────────────────────────────────────────
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return NavShell(
@@ -128,7 +123,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           );
         },
         branches: [
-          // Tab 0: Profil
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -137,7 +131,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Tab 1: Kuchnia (categories hub)
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -146,7 +139,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Tab 2: Przepisy (browser)
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -155,7 +147,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Tab 3: Ustawienia
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -183,19 +174,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       final authValue = authAsync.value!;
 
-      // Niezalogowany
       if (authValue.status != AuthStatus.authenticated) {
         if (!isOnAuth) return '/auth';
         return null;
       }
 
-      // Zalogowany, ale dopiero odpytujemy bazę o profil
       if (authValue.hasProfile == null) {
         if (!isOnSplash) return '/splash';
         return null;
       }
 
-      // Zalogowany BEZ profilu (Onboarding w toku)
       if (authValue.hasProfile == false) {
         if (!isOnOnboarding) {
           return '/onboarding/step_1';
@@ -203,7 +191,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      // Zalogowany Z PROFILEM (Onboarding skończony)
       if (authValue.hasProfile == true) {
         if (isOnSplash || isOnAuth || isOnOnboarding) return '/';
         return null;

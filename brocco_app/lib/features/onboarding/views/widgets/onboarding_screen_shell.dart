@@ -44,10 +44,7 @@ class OnboardingScreenShell extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 24), // Odstęp między górnym paskiem a treścią
-        // POPRAWKA 2: Jeśli ekran NIE jest scrollowalny, `content` musi być owinięty
-        // w Expanded, co zastępuje poprzedniego Spacera(). Dzięki temu treść wypełni
-        // dostępną przestrzeń i wypchnie przycisk na sam dół bez błędów układu.
+        const SizedBox(height: 24),
         if (scrollable) content else Expanded(child: content),
 
         if (scrollable) const SizedBox(height: 40),

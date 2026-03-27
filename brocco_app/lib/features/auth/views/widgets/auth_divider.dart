@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
-/// Separator "lub" między metodami logowania.
 class AuthDivider extends StatelessWidget {
   const AuthDivider({super.key});
 

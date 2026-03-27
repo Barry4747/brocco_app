@@ -18,20 +18,18 @@ class OnboardingSkillScreen extends ConsumerStatefulWidget {
 }
 
 class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
-  // Stany dla wszystkich trzech wymaganych pól z tego kroku
   CookingSkill? _selectedSkill;
   UsageFrequency? _selectedFrequency;
-  double _maxCookingTime = 30; // Domyślnie 30 minut
+  double _maxCookingTime = 30;
 
   @override
   Widget build(BuildContext context) {
-    // Przycisk "Kontynuuj" jest aktywny tylko, gdy użytkownik wybierze poziom i częstotliwość
     final isFormValid = _selectedSkill != null && _selectedFrequency != null;
 
     return OnboardingScreenShell(
       currentStep: 1,
       totalSteps: 4,
-      scrollable: true, // Zmienione na true!
+      scrollable: true,
       primaryButtonText: 'Kontynuuj',
       onPrimaryPressed: !isFormValid
           ? null
@@ -48,7 +46,6 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. POZIOM ZAAWANSOWANIA
           const OnboardingHeader(
             title: 'Jaki jest Twój aktualny poziom?',
             subtitle: 'Pomoże nam to dobrać odpowiednio trudne przepisy.',
@@ -80,7 +77,6 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
 
           const SizedBox(height: 40),
 
-          // 2. CZĘSTOTLIWOŚĆ GOTOWANIA
           const Text(
             'Jak często gotujesz?',
             style: TextStyle(
@@ -120,7 +116,6 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
 
           const SizedBox(height: 40),
 
-          // 3. MAKSYMALNY CZAS GOTOWANIA
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -156,7 +151,7 @@ class _OnboardingSkillScreenState extends ConsumerState<OnboardingSkillScreen> {
               value: _maxCookingTime,
               min: 15,
               max: 120,
-              divisions: 7, // (120-15)/15 = skoki co 15 minut
+              divisions: 7,
               label: '${_maxCookingTime.toInt()} min',
               onChanged: (value) => setState(() => _maxCookingTime = value),
             ),

@@ -9,11 +9,12 @@ class RoadmapViewModel extends FamilyAsyncNotifier<RoadmapData, String> {
     final repository = ref.read(roadmapRepositoryProvider);
     final userId = ref.watch(userIdProvider);
 
-    // Load fast from local cache first
-    final localState = await repository.getRoadmapDataFromLocal(userId, categoryId);
+    final localState = await repository.getRoadmapDataFromLocal(
+      userId,
+      categoryId,
+    );
     state = AsyncValue.data(localState);
 
-    // Sync in background and update State
     if (userId != null) {
       _syncInBackground(repository, userId, categoryId);
     }
@@ -22,9 +23,15 @@ class RoadmapViewModel extends FamilyAsyncNotifier<RoadmapData, String> {
   }
 
   Future<void> _syncInBackground(
-      RoadmapRepository repository, String userId, String categoryId) async {
+    RoadmapRepository repository,
+    String userId,
+    String categoryId,
+  ) async {
     try {
-      final updatedState = await repository.syncAndGetRoadmapData(userId, categoryId);
+      final updatedState = await repository.syncAndGetRoadmapData(
+        userId,
+        categoryId,
+      );
       state = AsyncValue.data(updatedState);
     } catch (_) {}
   }
@@ -32,5 +39,5 @@ class RoadmapViewModel extends FamilyAsyncNotifier<RoadmapData, String> {
 
 final roadmapViewModelProvider =
     AsyncNotifierProvider.family<RoadmapViewModel, RoadmapData, String>(
-  () => RoadmapViewModel(),
-);
+      () => RoadmapViewModel(),
+    );

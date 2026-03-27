@@ -30,8 +30,9 @@ class RoadmapSyncService {
           .where()
           .categoryIdEqualTo(categoryId)
           .findAll();
-      await _isar.isarRoadmapNodes
-          .deleteAll(existing.map((e) => e.id).toList());
+      await _isar.isarRoadmapNodes.deleteAll(
+        existing.map((e) => e.id).toList(),
+      );
 
       for (final row in rows) {
         final node = IsarRoadmapNode()
@@ -42,7 +43,8 @@ class RoadmapSyncService {
           ..previewImageUrl = row['preview_image_url'] as String?
           ..mapColumn = (row['map_column'] as int?) ?? 0
           ..mapRow = (row['map_row'] as int?) ?? 0
-          ..prerequisiteIds = (row['prerequisite_ids'] as List<dynamic>?)
+          ..prerequisiteIds =
+              (row['prerequisite_ids'] as List<dynamic>?)
                   ?.map((e) => e as String)
                   .toList() ??
               [];
@@ -59,7 +61,7 @@ class RoadmapSyncService {
         .then((nodes) => nodes.map((n) => n.supabaseId!).toList());
 
     if (nodeIds.isEmpty) return;
-    
+
     bool needsSupabaseRepair = false;
 
     final response = await _supabase
@@ -90,11 +92,10 @@ class RoadmapSyncService {
         await _isar.isarCompletedNodes.put(entry);
       }
 
-      // Heal completed_nodes_count in unlocked category
       final unlockedCats = await _isar.isarUnlockedCategorys
           .where()
           .userIdEqualToAnyCategoryId(userId)
-           .findAll();
+          .findAll();
       var unlockedCat = unlockedCats
           .where((c) => c.categoryId == categoryId)
           .firstOrNull;
@@ -121,7 +122,6 @@ class RoadmapSyncService {
           'category_id': categoryId,
           'completed_nodes_count': rows.length,
           'unlocked_at': DateTime.now().toIso8601String(),
-        // ignoring constraints explicitly if needed, but upsert should work if PK is user_id + category_id
         });
       } catch (_) {}
     }

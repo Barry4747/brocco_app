@@ -95,7 +95,6 @@ class OnboardingRepository {
         await _supabase.from('user_unlocked_categories').upsert(rowsToInsert);
       }
 
-      // Initialize default UX preferences
       await _supabase.from('user_ux_preferences').upsert({
         'user_id': userId,
         'keep_screen_on': true,

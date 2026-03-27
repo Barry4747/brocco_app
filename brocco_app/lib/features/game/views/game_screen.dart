@@ -69,7 +69,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── Top bar: Progress ─────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: MainProgressBar(
@@ -80,7 +79,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
             const SizedBox(height: 12),
 
-            // ── Back button row + Timer ───────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -106,13 +104,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
             const SizedBox(height: 16),
 
-            // ── Broccoli sprite + Step card ───────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  // Broccoli placeholder
                   Container(
                     width: 90,
                     height: 90,
@@ -125,7 +121,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Step card
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(14),
@@ -171,7 +166,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
             const SizedBox(height: 24),
 
-            // ── Ingredients area placeholder ──────────────────────────────────
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -188,7 +182,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // Empty placeholder for future ingredient logic
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -204,7 +197,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
             const SizedBox(height: 16),
 
-            // ── Bottom action button ──────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: PrimaryButton(

@@ -13,7 +13,6 @@ class Ingredient {
     this.sortOrder = 0,
   });
 
-  /// Formatted display string, e.g. "300 g" or "2 szt."
   String get formattedAmount {
     if (amount == null && unit == null) return '';
     final amountStr = amount != null

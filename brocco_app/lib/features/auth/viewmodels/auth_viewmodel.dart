@@ -53,7 +53,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
       if (session != null) {
         final hasProfile = await repository.hasProfile(session.user.id);
 
-        // Comprehensive sync (Profile, Categories, Progress)
         await ref.read(globalSyncServiceProvider).syncAll(session.user.id);
 
         state = AsyncValue.data(
@@ -74,7 +73,6 @@ class AuthViewModel extends AsyncNotifier<AuthState> {
     if (session != null) {
       final hasProfile = await repository.hasProfile(session.user.id);
 
-      // Comprehensive sync (Profile, Categories, Progress)
       await ref.read(globalSyncServiceProvider).syncAll(session.user.id);
 
       return AuthState(
