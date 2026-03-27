@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/recipe.dart';
+import '../../../shared/models/recipe.dart';
 import '../models/ingredient.dart';
 import '../repositories/recipe_detail_repository.dart';
 

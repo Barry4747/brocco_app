@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/recipe.dart';
+import '../../../shared/models/recipe.dart';
 import '../models/ingredient.dart';
-import 'dtos/recipe_dto.dart';
+import '../../../shared/repositories/dtos/recipe_dto.dart';
 import 'dtos/ingredient_dto.dart';
 
 class RecipeDetailRepository {

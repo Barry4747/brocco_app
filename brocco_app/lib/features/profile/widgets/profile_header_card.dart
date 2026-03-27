@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/profile_viewmodel.dart';
 
@@ -30,30 +32,44 @@ class ProfileHeaderCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.primaryOrange, width: 3),
+                  GestureDetector(
+                    onTap: () => _pickAndUploadAvatar(context, ref),
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.primaryOrange, width: 3),
+                          ),
+                          child: ClipOval(
+                            child: profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty
+                                ? Image.network(
+                                    profile.avatarUrl!,
+                                    fit: BoxFit.cover,
+                                    width: 80,
+                                    height: 80,
+                                    errorBuilder: (context, error, stackTrace) => 
+                                        const Icon(Icons.person_outline, size: 40, color: AppColors.greyText),
+                                  )
+                                : const Icon(Icons.person_outline, size: 40, color: AppColors.greyText),
+                          ),
                         ),
-                        child: const Icon(Icons.person_outline, size: 40, color: AppColors.greyText),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryOrange,
-                          borderRadius: BorderRadius.circular(8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryOrange,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '$level',
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                          ),
                         ),
-                        child: Text(
-                          '$level',
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -142,6 +158,56 @@ class ProfileHeaderCard extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Błąd: $e')),
       ),
+    );
+  }
+
+  Future<void> _pickAndUploadAvatar(BuildContext context, WidgetRef ref) async {
+    final ImagePicker picker = ImagePicker();
+    
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (BuildContext ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: AppColors.primaryOrange),
+                title: const Text('Zrób zdjęcie profilowe', style: TextStyle(fontWeight: FontWeight.w600)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final XFile? photo = await picker.pickImage(
+                    source: ImageSource.camera,
+                    maxWidth: 400,
+                    maxHeight: 400,
+                    imageQuality: 85,
+                  );
+                  if (photo != null) {
+                    ref.read(profileActionProvider.notifier).updateAvatar(File(photo.path));
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: AppColors.primaryOrange),
+                title: const Text('Wybierz z galerii', style: TextStyle(fontWeight: FontWeight.w600)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  final XFile? image = await picker.pickImage(
+                    source: ImageSource.gallery,
+                    maxWidth: 400,
+                    maxHeight: 400,
+                    imageQuality: 85,
+                  );
+                  if (image != null) {
+                    ref.read(profileActionProvider.notifier).updateAvatar(File(image.path));
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
