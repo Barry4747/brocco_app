@@ -64,7 +64,7 @@ class _Pushable3DButtonState extends State<Pushable3DButton> {
         padding: widget.padding,
         transform: Matrix4.translationValues(0, dy, 0),
         decoration: BoxDecoration(
-          color: widget.backgroundColor,
+          color: isDisabled ? Colors.grey.withValues(alpha: 0.3) : widget.backgroundColor,
           borderRadius: widget.borderRadius,
           border: widget.border,
           boxShadow: [
@@ -75,7 +75,10 @@ class _Pushable3DButtonState extends State<Pushable3DButton> {
             ),
           ],
         ),
-        child: widget.child,
+        child: Opacity(
+          opacity: isDisabled ? 0.5 : 1.0,
+          child: widget.child,
+        ),
       ),
     );
   }

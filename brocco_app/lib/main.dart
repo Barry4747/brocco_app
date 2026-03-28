@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'core/local_db/isar_provider.dart';
 import 'features/home/repositories/dtos/isar_category.dart';
@@ -17,6 +18,7 @@ import 'features/onboarding/repositories/dtos/isar_cuisine.dart';
 import 'features/onboarding/repositories/dtos/isar_ingredient.dart';
 import 'features/settings/repositories/dtos/isar_user_ux_preferences.dart';
 import 'shared/repositories/dtos/isar_recipe.dart';
+import 'package:brocco_app/core/theme/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,9 +60,16 @@ class BroccoApp extends ConsumerWidget {
       routerConfig: router,
       title: 'Brocco',
       theme: ThemeData(
+        textTheme: GoogleFonts.nunitoTextTheme(Theme.of(context).textTheme),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 0, 0, 0),
+          seedColor: AppColors.primaryText,
+          primary: AppColors.primaryText,
+          secondary: AppColors.primaryOrange,
+          surface: AppColors.background,
+          error: AppColors.errorRed,
         ),
+
+        scaffoldBackgroundColor: AppColors.background,
         useMaterial3: true,
       ),
     );
