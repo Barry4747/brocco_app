@@ -2,51 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../shared/widgets/chips/selectable_option_chip.dart';
 import '../../../../../shared/widgets/pills/multi_select_pill_group.dart';
+import '../../../../../shared/widgets/pills/selectable_pill.dart';
 import '../models/onboarding_data.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
 import '../viewmodels/onboarding_dictionaries_provider.dart';
 import 'widgets/onboarding_header.dart';
 import 'widgets/onboarding_screen_shell.dart';
-import 'widgets/cuisine_dropdown_field.dart';
-import 'widgets/ingredient_search_field.dart';
 
-class OnboardingTastesScreen extends ConsumerStatefulWidget {
-  const OnboardingTastesScreen({super.key});
+class OnboardingStep4Screen extends ConsumerStatefulWidget {
+  const OnboardingStep4Screen({super.key});
 
   @override
-  ConsumerState<OnboardingTastesScreen> createState() =>
-      _OnboardingTastesScreenState();
+  ConsumerState<OnboardingStep4Screen> createState() =>
+      _OnboardingStep4ScreenState();
 }
 
-class _OnboardingTastesScreenState
-    extends ConsumerState<OnboardingTastesScreen> {
+class _OnboardingStep4ScreenState extends ConsumerState<OnboardingStep4Screen> {
   EatingStyle? _selectedEatingStyle;
-
-  final List<String> _selectedAllergies = [];
-
   final List<String> _selectedCuisines = [];
 
-  final List<String> _selectedDisliked = [];
-
-  void _toggleMultiSelect(String item, List<String> list) {
-    setState(() {
-      if (item == 'Brak') {
-        list.clear();
-        list.add('Brak');
-        return;
-      }
-
-      if (list.contains('Brak')) {
-        list.remove('Brak');
-      }
-
-      if (list.contains(item)) {
-        list.remove(item);
-      } else {
-        list.add(item);
-      }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final d = ref.read(onboardingViewModelProvider);
+      if (!mounted) return;
+      setState(() {
+        _selectedEatingStyle = d.eatingStyle;
+        _selectedCuisines
+          ..clear()
+          ..addAll(d.favoriteCuisines);
+      });
     });
   }
 
@@ -70,34 +57,21 @@ class _OnboardingTastesScreenState
     final isFormValid = _selectedEatingStyle != null;
 
     return OnboardingScreenShell(
-      currentStep: 2,
-      totalSteps: 4,
+      currentStep: 4,
+      totalSteps: 7,
       scrollable: true,
       onBack: () => context.pop(),
       primaryButtonText: 'Kontynuuj',
       onPrimaryPressed: !isFormValid
           ? null
           : () {
-              final allergies = _selectedAllergies
-                  .where((e) => e != 'Brak')
-                  .toList();
-              final disliked = _selectedDisliked
-                  .where((e) => e != 'Brak')
-                  .toList();
-
-              ref
-                  .read(onboardingViewModelProvider.notifier)
-                  .updateTastes(
+              ref.read(onboardingViewModelProvider.notifier).updateTastes(
                     eatingStyle: _selectedEatingStyle,
-                    allergies: allergies,
-                    favoriteCuisines: _selectedCuisines,
-                    dislikedIngredients: disliked,
+                    favoriteCuisines: List<String>.from(_selectedCuisines),
                   );
-              context.push('/onboarding/step_3');
+              context.push('/onboarding/step_5');
             },
-      content: ref
-          .watch(onboardingDictionariesProvider)
-          .when(
+      content: ref.watch(onboardingDictionariesProvider).when(
             loading: () => const Center(
               child: Padding(
                 padding: EdgeInsets.all(32.0),
@@ -111,62 +85,44 @@ class _OnboardingTastesScreenState
               ),
             ),
             data: (dictionaries) {
-              final availableAllergies = dictionaries['allergies'] ?? [];
               final availableCuisines = dictionaries['cuisines'] ?? [];
-              final availableDisliked = dictionaries['ingredients'] ?? [];
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const OnboardingHeader(
-                    title: 'Zasady w Twojej kuchni?',
+                    title: 'Styl i smaki',
                     subtitle:
-                        'Wybierz swój styl odżywiania oraz to, czego unikasz.',
+                        'Dopasujemy przepisy do Twojego stylu i ulubionych kuchni.',
                   ),
                   const SizedBox(height: 32),
-
-                  const _SectionTitle(title: 'Główny styl odżywiania'),
+                  const _SectionTitle(title: 'Styl odżywiania'),
                   Wrap(
-                    spacing: 12,
+                    spacing: 10,
                     runSpacing: 12,
                     children: EatingStyle.values.map((style) {
-                      return SelectableOptionChip(
-                        label: _eatingStyleLabel(style),
+                      return SelectablePill(
+                        text: _eatingStyleLabel(style),
                         isSelected: _selectedEatingStyle == style,
                         onTap: () =>
                             setState(() => _selectedEatingStyle = style),
                       );
                     }).toList(),
                   ),
-
                   const SizedBox(height: 32),
-
-                  const _SectionTitle(title: 'Czego nie lubisz? (opcjonalnie)'),
-                  IngredientSearchField(
-                    availableIngredients: availableDisliked,
-                    selectedIngredients: _selectedDisliked,
-                    onToggle: (item) =>
-                        _toggleMultiSelect(item, _selectedDisliked),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  const _SectionTitle(title: 'Alergie i nietolerancje'),
-                  MultiSelectPillGroup(
-                    items: availableAllergies,
-                    selectedItems: _selectedAllergies,
-                    onToggle: (item) =>
-                        _toggleMultiSelect(item, _selectedAllergies),
-                  ),
-
-                  const SizedBox(height: 32),
-
                   const _SectionTitle(title: 'Ulubione kuchnie (opcjonalnie)'),
-                  CuisineDropdownField(
-                    availableCuisines: availableCuisines,
-                    selectedCuisines: _selectedCuisines,
-                    onToggle: (item) =>
-                        _toggleMultiSelect(item, _selectedCuisines),
+                  MultiSelectPillGroup(
+                    items: availableCuisines,
+                    selectedItems: _selectedCuisines,
+                    onToggle: (item) {
+                      setState(() {
+                        if (_selectedCuisines.contains(item)) {
+                          _selectedCuisines.remove(item);
+                        } else {
+                          _selectedCuisines.add(item);
+                        }
+                      });
+                    },
                   ),
                 ],
               );

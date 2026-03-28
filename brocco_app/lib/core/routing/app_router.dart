@@ -7,10 +7,13 @@ import 'package:brocco_app/features/recipe_detail/views/recipe_detail_screen.dar
 import 'package:brocco_app/features/game/views/level_completed_screen.dart';
 import 'package:brocco_app/features/game/views/game_screen.dart';
 import 'package:brocco_app/features/profile/views/profile_screen.dart';
-import 'package:brocco_app/features/onboarding/views/onboarding_biometric_screen.dart';
-import 'package:brocco_app/features/onboarding/views/onboarding_goals_screen.dart';
-import 'package:brocco_app/features/onboarding/views/onboarding_skill_screen.dart';
-import 'package:brocco_app/features/onboarding/views/onboarding_tastes_screen.dart';
+import 'package:brocco_app/features/onboarding/views/onboarding_step_1_screen.dart';
+import 'package:brocco_app/features/onboarding/views/onboarding_step_2_screen.dart';
+import 'package:brocco_app/features/onboarding/views/onboarding_step_3_screen.dart';
+import 'package:brocco_app/features/onboarding/views/onboarding_step_4_screen.dart';
+import 'package:brocco_app/features/onboarding/views/onboarding_step_5_screen.dart';
+import 'package:brocco_app/features/onboarding/views/onboarding_step_6_screen.dart';
+import 'package:brocco_app/features/onboarding/views/onboarding_step_7_screen.dart';
 import 'package:brocco_app/features/settings/views/settings_screen.dart';
 import 'package:brocco_app/features/browser/views/browser_screen.dart';
 import 'package:brocco_app/shared/widgets/nav_shell.dart';
@@ -40,19 +43,31 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/auth', builder: (context, state) => const AuthScreen()),
       GoRoute(
         path: '/onboarding/step_1',
-        builder: (context, state) => const OnboardingSkillScreen(),
+        builder: (context, state) => const OnboardingStep1Screen(),
       ),
       GoRoute(
         path: '/onboarding/step_2',
-        builder: (context, state) => const OnboardingTastesScreen(),
+        builder: (context, state) => const OnboardingStep2Screen(),
       ),
       GoRoute(
         path: '/onboarding/step_3',
-        builder: (context, state) => const OnboardingGoalsScreen(),
+        builder: (context, state) => const OnboardingStep3Screen(),
       ),
       GoRoute(
         path: '/onboarding/step_4',
-        builder: (context, state) => const OnboardingBiometricsScreen(),
+        builder: (context, state) => const OnboardingStep4Screen(),
+      ),
+      GoRoute(
+        path: '/onboarding/step_5',
+        builder: (context, state) => const OnboardingStep5Screen(),
+      ),
+      GoRoute(
+        path: '/onboarding/step_6',
+        builder: (context, state) => const OnboardingStep6Screen(),
+      ),
+      GoRoute(
+        path: '/onboarding/step_7',
+        builder: (context, state) => const OnboardingStep7Screen(),
       ),
       GoRoute(
         path: '/roadmap/:categoryId',

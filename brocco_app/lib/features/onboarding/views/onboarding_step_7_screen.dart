@@ -1,38 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../models/onboarding_data.dart';
 import '../viewmodels/onboarding_viewmodel.dart';
 import 'widgets/onboarding_header.dart';
 import 'widgets/onboarding_screen_shell.dart';
 
-class OnboardingBiometricsScreen extends ConsumerStatefulWidget {
-  const OnboardingBiometricsScreen({super.key});
+class OnboardingStep7Screen extends ConsumerStatefulWidget {
+  const OnboardingStep7Screen({super.key});
 
   @override
-  ConsumerState<OnboardingBiometricsScreen> createState() =>
-      _OnboardingBiometricsScreenState();
+  ConsumerState<OnboardingStep7Screen> createState() =>
+      _OnboardingStep7ScreenState();
 }
 
-class _OnboardingBiometricsScreenState
-    extends ConsumerState<OnboardingBiometricsScreen> {
-  Gender? _selectedGender;
-  final _heightController = TextEditingController();
+class _OnboardingStep7ScreenState extends ConsumerState<OnboardingStep7Screen> {
   final _weightController = TextEditingController();
   final _targetWeightController = TextEditingController();
-  DateTime? _birthDate;
   ActivityLevel _activityLevel = ActivityLevel.moderate;
 
   bool _isLoading = false;
 
-  bool _canProceed(bool showTargetWeight) {
-    return _selectedGender != null &&
-        _birthDate != null &&
-        _heightController.text.trim().isNotEmpty &&
-        _weightController.text.trim().isNotEmpty &&
-        (!showTargetWeight || _targetWeightController.text.trim().isNotEmpty);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final d = ref.read(onboardingViewModelProvider);
+      if (!mounted) return;
+      setState(() {
+        _activityLevel = d.activityLevel ?? ActivityLevel.moderate;
+        if (d.currentWeightKg != null) {
+          _weightController.text = _formatWeight(d.currentWeightKg!);
+        }
+        if (d.targetWeightKg != null) {
+          _targetWeightController.text = _formatWeight(d.targetWeightKg!);
+        }
+      });
+    });
+  }
+
+  String _formatWeight(double w) {
+    final s = w.toStringAsFixed(1);
+    return s.endsWith('.0') ? w.toStringAsFixed(0) : s;
+  }
+
+  @override
+  void dispose() {
+    _weightController.dispose();
+    _targetWeightController.dispose();
+    super.dispose();
   }
 
   void _showError(String message) {
@@ -42,38 +59,9 @@ class _OnboardingBiometricsScreenState
     );
   }
 
-  @override
-  void dispose() {
-    _heightController.dispose();
-    _weightController.dispose();
-    _targetWeightController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 25)),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.accentGreen,
-              onPrimary: Colors.white,
-              onSurface: AppColors.primaryText,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null && picked != _birthDate) {
-      setState(() {
-        _birthDate = picked;
-      });
-    }
+  bool _canProceed(bool showTargetWeight) {
+    return _weightController.text.trim().isNotEmpty &&
+        (!showTargetWeight || _targetWeightController.text.trim().isNotEmpty);
   }
 
   @override
@@ -81,25 +69,19 @@ class _OnboardingBiometricsScreenState
     final onboardingData = ref.watch(onboardingViewModelProvider);
     final showTargetWeight =
         onboardingData.mainGoal == MainGoal.loseWeight ||
-        onboardingData.mainGoal == MainGoal.buildMuscle;
+            onboardingData.mainGoal == MainGoal.buildMuscle;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: OnboardingScreenShell(
-        currentStep: 4,
-        totalSteps: 4,
+        currentStep: 7,
+        totalSteps: 7,
         onBack: () => context.pop(),
         scrollable: true,
         primaryButtonText: _isLoading ? 'Zapisywanie...' : 'Zakończ i oblicz',
         onPrimaryPressed: !_canProceed(showTargetWeight) || _isLoading
             ? null
             : () async {
-                final height = int.tryParse(_heightController.text.trim());
-                if (height == null || height < 50 || height > 250) {
-                  _showError('Podano nieprawidłowy wzrost (50 - 250 cm).');
-                  return;
-                }
-
                 final weight = double.tryParse(
                   _weightController.text.replaceAll(',', '.').trim(),
                 );
@@ -123,27 +105,11 @@ class _OnboardingBiometricsScreenState
                   }
                 }
 
-                final now = DateTime.now();
-                final today = DateTime(now.year, now.month, now.day);
-                if (_birthDate == null || !_birthDate!.isBefore(today)) {
-                  _showError('Data urodzenia musi być z przeszłości.');
-                  return;
-                }
-
                 setState(() => _isLoading = true);
 
-                ref
-                    .read(onboardingViewModelProvider.notifier)
-                    .updateBiometrics(
-                      gender: _selectedGender,
-                      birthDate: _birthDate,
-                      heightCm: int.tryParse(_heightController.text),
-                      currentWeightKg: double.tryParse(
-                        _weightController.text.replaceAll(',', '.'),
-                      ),
-                      targetWeightKg: double.tryParse(
-                        _targetWeightController.text.replaceAll(',', '.'),
-                      ),
+                ref.read(onboardingViewModelProvider.notifier).updateBiometrics(
+                      currentWeightKg: weight,
+                      targetWeightKg: targetWeight,
                       activityLevel: _activityLevel,
                     );
                 try {
@@ -169,103 +135,16 @@ class _OnboardingBiometricsScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const OnboardingHeader(
-              title: 'Ostatnie szlify!',
-              subtitle: 'Te dane pozwolą nam wyliczyć Twój profil kaloryczny.',
+              title: 'Waga i aktywność',
+              subtitle:
+                  'Te dane pozwolą nam wyliczyć Twój profil kaloryczny.',
             ),
             const SizedBox(height: 32),
-
-            const _Label('Płeć'),
-            SegmentedButton<Gender>(
-              style: SegmentedButton.styleFrom(
-                selectedBackgroundColor: AppColors.accentGreen.withOpacity(0.2),
-                selectedForegroundColor: AppColors.accentGreen,
-                side: const BorderSide(color: AppColors.accentGreen),
-              ),
-              segments: const [
-                ButtonSegment(value: Gender.female, label: Text('Kobieta')),
-                ButtonSegment(value: Gender.male, label: Text('Mężczyzna')),
-                ButtonSegment(value: Gender.other, label: Text('Inna')),
-              ],
-              selected: _selectedGender != null
-                  ? {_selectedGender!}
-                  : <Gender>{},
-              emptySelectionAllowed: true,
-              showSelectedIcon: false,
-              onSelectionChanged: (Set<Gender> newSelection) {
-                if (newSelection.isNotEmpty) {
-                  setState(() => _selectedGender = newSelection.first);
-                }
-              },
+            _BiometricField(
+              label: 'Waga (kg)',
+              controller: _weightController,
+              onChanged: () => setState(() {}),
             ),
-            const SizedBox(height: 24),
-
-            const _Label('Data urodzenia'),
-            GestureDetector(
-              onTap: () => _selectDate(context),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.greyText.withOpacity(0.3),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryText.withOpacity(0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _birthDate == null
-                          ? 'Wybierz datę'
-                          : DateFormat('dd.MM.yyyy').format(_birthDate!),
-                      style: TextStyle(
-                        color: _birthDate == null
-                            ? AppColors.greyText
-                            : AppColors.primaryText,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const Icon(
-                      Icons.calendar_today,
-                      color: AppColors.accentGreen,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _BiometricField(
-                    label: 'Wzrost (cm)',
-                    controller: _heightController,
-                    onChanged: () => setState(() {}),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _BiometricField(
-                    label: 'Waga (kg)',
-                    controller: _weightController,
-                    onChanged: () => setState(() {}),
-                  ),
-                ),
-              ],
-            ),
-
             if (showTargetWeight) ...[
               const SizedBox(height: 16),
               _BiometricField(
@@ -274,9 +153,7 @@ class _OnboardingBiometricsScreenState
                 onChanged: () => setState(() {}),
               ),
             ],
-
             const SizedBox(height: 24),
-
             const _Label('Aktywność fizyczna'),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),

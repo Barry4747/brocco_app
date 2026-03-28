@@ -7,24 +7,32 @@ import '../viewmodels/onboarding_viewmodel.dart';
 import 'widgets/onboarding_header.dart';
 import 'widgets/onboarding_screen_shell.dart';
 
-class OnboardingGoalsScreen extends ConsumerStatefulWidget {
-  const OnboardingGoalsScreen({super.key});
+class OnboardingStep1Screen extends ConsumerStatefulWidget {
+  const OnboardingStep1Screen({super.key});
 
   @override
-  ConsumerState<OnboardingGoalsScreen> createState() =>
-      _OnboardingGoalsScreenState();
+  ConsumerState<OnboardingStep1Screen> createState() =>
+      _OnboardingStep1ScreenState();
 }
 
-class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
+class _OnboardingStep1ScreenState extends ConsumerState<OnboardingStep1Screen> {
   MainGoal? _selectedGoal;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final goal = ref.read(onboardingViewModelProvider).mainGoal;
+      if (mounted) setState(() => _selectedGoal = goal);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return OnboardingScreenShell(
-      currentStep: 3,
-      totalSteps: 4,
+      currentStep: 1,
+      totalSteps: 7,
       scrollable: true,
-      onBack: () => context.pop(),
       primaryButtonText: 'Kontynuuj',
       onPrimaryPressed: _selectedGoal == null
           ? null
@@ -32,7 +40,7 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
               ref
                   .read(onboardingViewModelProvider.notifier)
                   .updateBiometrics(mainGoal: _selectedGoal);
-              context.push('/onboarding/step_4');
+              context.push('/onboarding/step_2');
             },
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +51,6 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
                 'Dostosujemy aplikację i przepisy do Twojego głównego celu.',
           ),
           const SizedBox(height: 32),
-
           SelectionCardWithImage(
             title: 'Jeść zdrowiej',
             subtitle: 'Chcę wprowadzić lepsze nawyki do swojej kuchni.',
@@ -52,7 +59,6 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
             onTap: () => setState(() => _selectedGoal = MainGoal.eatHealthier),
           ),
           const SizedBox(height: 12),
-
           SelectionCardWithImage(
             title: 'Schudnąć',
             subtitle: 'Potrzebuję kontroli nad kaloriami i makroskładnikami.',
@@ -61,7 +67,6 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
             onTap: () => setState(() => _selectedGoal = MainGoal.loseWeight),
           ),
           const SizedBox(height: 12),
-
           SelectionCardWithImage(
             title: 'Zbudować masę mięśniową',
             subtitle: 'Zależy mi na posiłkach bogatych w białko.',
@@ -70,7 +75,6 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
             onTap: () => setState(() => _selectedGoal = MainGoal.buildMuscle),
           ),
           const SizedBox(height: 12),
-
           SelectionCardWithImage(
             title: 'Nauczyć się gotować',
             subtitle: 'Chcę poznać nowe techniki od podstaw.',
@@ -79,7 +83,6 @@ class _OnboardingGoalsScreenState extends ConsumerState<OnboardingGoalsScreen> {
             onTap: () => setState(() => _selectedGoal = MainGoal.learnToCook),
           ),
           const SizedBox(height: 12),
-
           SelectionCardWithImage(
             title: 'Zaoszczędzić czas',
             subtitle: 'Szukam szybkich i sprawdzonych przepisów na co dzień.',
